@@ -1,15 +1,19 @@
 import { App } from "vue";
-import { createRouter, createWebHistory, RouteRecordRaw, NavigationGuardWithThis } from "vue-router";
+import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 
 interface PageConfig extends Pick<RouteRecordRaw, "meta" | "beforeEnter"> {
+  name?: string;
+
   /**
-   * 路由驗證器
+   * 路由參數驗證，會直接接在path後面
+   * @example
+   * 404路由: (.*)* -> /:notFound(.*)*
+   * id路由: (\\d+) -> /:id(\\d+)
    */
-  validate?: NavigationGuardWithThis<undefined>;
+  validation?: string;
 }
 
-type RouteNames = "about" | "aboutId" | "aboutIndex" | "index" | "login";
-const routeNames = new Set<RouteNames>();
+type RouteNames = "forgetPassword" | "PageNotFound" | "dashboard" | "dashboardIndex" | "login";
 
 /**
  * 依照views之下的檔案取得路由
@@ -36,35 +40,33 @@ function generateRoutes(
   }
 
   for (const [pagePath, component] of Object.entries(componentModules)) {
-    //取出路徑 替換掉../views、.vue，並將[xxx]替換為:xxx
-    const routePath = pagePath.replace(/\.\.\/views|\.vue/g, "").replace(/\[(.*?)\]/, ":$1") || "/";
+    const routePath =
+      pagePath
+        // ../views/[PageNotFound].vue -> /[PageNotFound]
+        .replace(/\.\.\/views|\.vue/g, "")
+        // /[PageNotFound] -> /:PageNotFound
+        .replace(/\[(.*?)\]/, ":$1")
+        // /:PageNotFound -> /:pageNotFound
+        .replace(/(?<=\/:?)(.)/g, (_, t) => `${t.toLowerCase()}`) || "/";
+
+    const pageConfig = pageModules[pagePath.replace(".vue", ".ts")] || {};
 
     //依照路徑取出路由名稱陣列並將:xxx替換為xxx
     const dynamicRouteNameList = routePath.split("/").filter(Boolean),
       routeNameList = replaceDynamicRouteName(dynamicRouteNameList),
-      //當前路由的名稱
-      routeName = getRouteName(routeNameList),
-      //當前路由層數
+      routeName = pageConfig.name || getRouteName(routeNameList),
       isFirstLayer = routeNameList.length === 1;
-
-    routeNames.add(routeName);
-
-    const { meta, beforeEnter, validate } = pageModules[pagePath.replace(".vue", ".ts")] || {};
 
     routeTreeMap[routeName] = (() => {
       const _path = isFirstLayer ? routePath : dynamicRouteNameList.slice(1).join("/");
       return {
         //替換掉結尾的index字串，ex: /index => /
-        path: _path.replace(/index$/, ""),
+        path: _path.replace(/index$/, "") + (pageConfig.validation || ""),
         name: routeName,
         component,
         children: routeTreeMap[routeName]?.children || [],
-        meta,
-        beforeEnter: (() => {
-          const _beforeEnter = Array.isArray(beforeEnter) ? beforeEnter : beforeEnter ? [beforeEnter] : [];
-          validate && _beforeEnter.push(validate);
-          return _beforeEnter;
-        })(),
+        meta: pageConfig.meta,
+        beforeEnter: pageConfig.beforeEnter,
       } as RouteRecordRaw;
     })();
 
@@ -89,16 +91,40 @@ function generateRoutes(
 
 export const routes = generateRoutes();
 // console.log("routes :>> ", routes);
+
 /**
  * 若想使用ROUTE_NAMES，在新增或刪除頁面時，要手動更新type RouteNames
  *
  * 使用以下程式碼在console可以獲得type RouteNames
  * console.log("更新routeNames :>> ", [...routeNames].map((name) => `"${name.replace(/-(.)/g, (_, char) => char.toUpperCase())}"`).join("|"));
  */
-export const ROUTE_NAMES = [...routeNames].reduce((prev, name) => {
-  prev[name] = name;
-  return prev;
-}, {} as Record<RouteNames, string>);
+export const ROUTE_NAMES = (() => {
+  const names = {} as Record<RouteNames, string>;
+  function getNames(_routes = routes) {
+    for (let i = 0, len = _routes.length; i < len; i++) {
+      const route = _routes[i];
+
+      if (route.name && typeof route.name === "string") {
+        const routeName = route.name.replace(/-(.)/g, (_, char) => char.toUpperCase()) as RouteNames;
+        names[routeName] = route.name;
+      }
+
+      if (route.children?.length) {
+        getNames(route.children);
+      }
+    }
+  }
+  getNames();
+  return names;
+})();
+
+// console.log("ROUTE_NAMES :>> ", ROUTE_NAMES);
+console.log(
+  "更新routeNames :>> ",
+  Object.keys(ROUTE_NAMES)
+    .map((i) => `"${i}"`)
+    .join("|"),
+);
 
 const router = createRouter({
   history: createWebHistory(),
