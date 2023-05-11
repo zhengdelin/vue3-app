@@ -45,13 +45,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       vue(),
       // gzip压缩 生产环境生成 .gz 文件
-      viteCompression({
-        verbose: true,
-        disable: false,
-        threshold: 10240,
-        algorithm: "gzip",
-        ext: ".gz",
-      }),
+      viteCompression(),
       ...UnpluginAutoImport,
       WindiCSS(),
     ],
