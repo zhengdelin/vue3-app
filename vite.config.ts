@@ -13,34 +13,37 @@ import Components from "unplugin-vue-components/vite";
 const UnpluginAutoImport = [
   AutoImport({
     imports: ["vue", "vue-router"],
-    dts: true,
+    dts: resolve(__dirname, "./src/auto-imports.d.ts"),
   }),
 
   Components({
     // 從 `./src/components/` 路徑查找
     extensions: ["vue"],
     include: [/\.vue$/, /\.vue\?vue/],
-    dts: true,
+    dts: resolve(__dirname, "./src/components.d.ts"),
     dirs: [resolve(__dirname, "src/components")],
   }),
 ];
-
-// function getPages(mode: string) {
-//   const allPages = {
-//     admin: resolve(__dirname, "src/pages/admin/index.html"),
-//     agent: resolve(__dirname, "src/pages/agent/index.html"),
-//   };
-//   const isDevOrProd = mode === "development" || mode === "production";
-//   if (isDevOrProd) {
-//     return allPages;
-//   }
-//   return { [mode]: allPages[mode] };
-// }
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const port = +env.PORT || 3000;
+
+  // 多頁應用用
+  // const model = env.VITE_APP_MODEL || "";
+  // const pages = (() => {
+  //   const allPages = {
+  //     admin: resolve(__dirname, "src/pages/admin/index.html"),
+  //     agent: resolve(__dirname, "src/pages/agent/index.html"),
+  //   };
+  //   if (!model) {
+  //     return allPages;
+  //   }
+  //   return allPages[model];
+  // })();
+  // const root = `./src/pages/${model}`;
+
   return {
     plugins: [
       vue(),
