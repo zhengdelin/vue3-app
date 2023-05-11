@@ -1,13 +1,12 @@
 import { createApp } from "vue";
 import "virtual:windi.css";
-import "./style.css";
-import "./assets/css/app.scss";
+import "@/assets/styles/app.scss";
 import App from "./App.vue";
 import { installPinia } from "./store";
-import { setupDebounceThrottleDirectives } from "./compositions/useDebounceThrottle";
-import { installNotifications } from "./compositions/useNotifications";
+import { setupDebounceThrottleDirectives } from "@/composables/useDebounceThrottle";
+import { installNotifications } from "@/composables/useNotifications";
 import { installRouter } from "./router";
-
+import "@/plugins/extend-prototype/index";
 const app = createApp(App);
 
 installPinia(app);

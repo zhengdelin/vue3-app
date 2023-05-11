@@ -17,7 +17,3 @@ export function isNullOrEmpty(data: any) {
       return !data;
   }
 }
-
-export function getBaseURL() {
-  return import.meta.env.VITE_URL;
-}

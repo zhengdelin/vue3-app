@@ -2,10 +2,17 @@
 import { Method, AxiosRequestConfig, AxiosInstance, CancelTokenSource } from "axios";
 
 interface ToastConfig {
-  showSuccessToast?: boolean;
-  showErrorToast?: boolean;
-  successText?: string;
-  errorText?: string;
+  success?:
+    | {
+        message?: string;
+      }
+    | false;
+
+  error?:
+    | {
+        message?: string;
+      }
+    | false;
 }
 
 export {};
@@ -26,27 +33,17 @@ declare module "axios" {
 // type Query = ReturnType<typeof injectAllApi>;
 
 declare global {
-  type APIQueryResponse<T, K> = {
-    msg: string;
+  type APIQueryResponse<T = unknown, K = unknown> = {
     data: T;
-    message?: string;
+    message: string;
+    notify: boolean;
+    success: boolean;
   } & K;
 
-  interface APIErrorResponseType1 {
-    errors: {
-      location: string;
-      msg: string;
-      param: string;
-      value: any;
-    }[];
-  }
-  interface APIErrorResponseType2 {
-    message: string;
-  }
-  type APIErrorResponse = APIErrorResponseType1 | APIErrorResponseType2;
+  type APIErrorResponse = Omit<APIQueryResponse, "data">;
 
   interface QueryHandler {
-    <T, K = unknown>(url: string, data?: object, config?: AxiosRequestConfig): Promise<APIQueryResponse<T, K>>;
+    <T = unknown, K = unknown>(url: string, data?: object, config?: AxiosRequestConfig): Promise<APIQueryResponse<T, K>>;
   }
 
   interface QueryHandlers extends Record<Extract<Method, "get" | "post" | "delete" | "patch" | "put">, QueryHandler> {

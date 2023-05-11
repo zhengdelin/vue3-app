@@ -1,4 +1,3 @@
-import { getBaseURL } from "@/compositions/useUtils";
 import { injectAuthAPI } from "./auth";
 import { useAxios } from "./AxiosConfig";
 import { injectGlobalAPI } from "./global";
@@ -11,4 +10,4 @@ export function injectAllAPI(queryHandlers: QueryHandlers) {
     image: injectImageAPI(queryHandlers),
   };
 }
-export const $api = injectAllAPI(useAxios(getBaseURL()));
+export const $api = injectAllAPI(useAxios());

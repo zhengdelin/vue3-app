@@ -1,5 +1,12 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosProgressEvent } from "axios";
 
+function getToastConfig({ success = {}, error = {} }: AxiosRequestConfig["toastConfig"] = { success: {}, error: {} }) {
+  return {
+    success,
+    error,
+  };
+}
+
 // 註冊攔截器
 export function registerAxiosInterceptors($axios: AxiosInstance) {
   // console.log("app :>> ", app);
@@ -21,22 +28,23 @@ export function registerAxiosInterceptors($axios: AxiosInstance) {
   );
   $axios.interceptors.response.use(
     (response) => {
-      const data = response.data as APIQueryResponse<unknown, unknown>;
+      const data = response.data as APIQueryResponse;
       const config = response.config as AxiosRequestConfig;
-      if (process.env.NODE_ENV !== "production") console.log(`${config.method} ${config.url}: response->`, response);
-      const { toastConfig } = config;
-      // 沒回傳資料並且也沒設置toast
-      if (!data && !toastConfig) return data;
-      const showToast = toastConfig?.showSuccessToast ?? true;
+      if (process.env.NODE_ENV !== "production") {
+        console.group(`${config.method} ${config.url}`);
+        console.log(response);
+        console.groupEnd();
+      }
+      const toastConfig = getToastConfig(config.toastConfig);
+
+      const showToast = toastConfig.success;
       // 不顯示toast
       if (!showToast) return data;
-      if (toastConfig?.successText) {
-        // 成功訊息
+      if (showToast.message) {
+        // 自訂成功訊息
       } else {
         // 預設的提示方式
-        const realMessage = data.msg || data.message;
-        if (config.method !== "get" && realMessage) {
-          // 預設的提示方式
+        if (config.method !== "get" && data.message) {
         }
       }
       return data;
@@ -46,27 +54,24 @@ export function registerAxiosInterceptors($axios: AxiosInstance) {
       const returnData = Promise.reject(errorResponse?.data);
       if (errorResponse) {
         const config = errorResponse.config;
-        if (process.env.NODE_ENV !== "production") console.error(`${config.method} ${errorResponse.config.url}: response->`, errorResponse);
+        if (process.env.NODE_ENV !== "production") {
+          console.group(`${config.method} ${config.url}`);
+          console.error(errorResponse);
+          console.groupEnd();
+        }
         switch (errorResponse.status) {
           case 401: {
             // 憑證過期重新登入
             break;
           }
           default: {
-            const toastConfig = config.toastConfig;
-            const showToast = toastConfig?.showErrorToast ?? true;
-            if (!showToast) return returnData;
-            if (toastConfig?.errorText) {
-              // 錯誤訊息
+            const { error } = getToastConfig(config.toastConfig);
+            if (!error) return returnData;
+            if (error.message) {
+              // 自訂錯誤訊息
             } else {
-              // 預設
+              // 預設錯誤訊息
               const data = errorResponse.data as APIErrorResponse;
-              if (data.message) {
-                // 錯誤訊息
-              } else {
-                // 例外錯誤
-                console.error("Unexpected error :>> ", error);
-              }
             }
           }
         }
@@ -76,7 +81,7 @@ export function registerAxiosInterceptors($axios: AxiosInstance) {
   );
 }
 
-export function useAxios(baseURL: string) {
+export function useAxios(baseURL = "/api") {
   const $axios = axios.create({
     baseURL,
     timeout: 20000,
