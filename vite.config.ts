@@ -1,7 +1,6 @@
 import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
 import { resolve } from "path";
-import WindiCSS from "vite-plugin-windicss";
 import viteCompression from "vite-plugin-compression";
 
 /**
@@ -22,6 +21,9 @@ const UnpluginAutoImport = [
     include: [/\.vue$/, /\.vue\?vue/],
     dts: resolve(__dirname, "./src/components.d.ts"),
     dirs: [resolve(__dirname, "src/components")],
+    directoryAsNamespace: true,
+    collapseSamePrefixes: true,
+    resolvers: [],
   }),
 ];
 
@@ -50,13 +52,12 @@ export default defineConfig(({ mode }) => {
       // gzip压缩 生产环境生成 .gz 文件
       viteCompression(),
       ...UnpluginAutoImport,
-      WindiCSS(),
     ],
 
     css: {
       preprocessorOptions: {
         scss: {
-          additionalData: '@import "@/assets/styles/global.scss";',
+          additionalData: '@use "@/assets/styles/global.scss" as *;',
         },
       },
     },

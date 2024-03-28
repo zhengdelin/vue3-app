@@ -37,10 +37,10 @@ module.exports = {
   plugins: ["@typescript-eslint", "vue", "prettier"],
   rules: {
     "vue/multi-word-component-names": 0,
-    "prettier/prettier": "error",
+    // "prettier/prettier": "error",
     "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
     "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
 
-    "no-extend-native": ["error", { exceptions: ["Array"] }],
+    "no-extend-native": ["error", { exceptions: ["Array", "String"] }],
   },
 };

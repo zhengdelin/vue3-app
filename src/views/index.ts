@@ -1,6 +1,5 @@
-import { definePageConfig } from "@/router";
-
-export default definePageConfig({
+import { defineRouteConfig } from "vite-plugin-routes-generator";
+export default defineRouteConfig({
   meta: {
     title: "首頁",
   },

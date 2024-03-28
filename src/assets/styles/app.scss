@@ -1,10 +1,13 @@
 //npm add -D sass
+@tailwind base;
+@tailwind utilities;
+@tailwind variants;
 
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   font-weight: 400;
 
-  color-scheme: light dark;
+  // color-scheme: light dark;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -16,7 +19,7 @@
 body {
   margin: 0;
   display: flex;
-  place-items: center;
+  justify-content: center;
   min-width: 320px;
   min-height: 100vh;
 }

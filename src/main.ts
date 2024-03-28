@@ -1,17 +1,17 @@
 import { createApp } from "vue";
-import "virtual:windi.css";
 import "@/assets/styles/app.scss";
 import App from "./App.vue";
 import { installPinia } from "./store";
 import { setupDebounceThrottleDirectives } from "@/composables/useDebounceThrottle";
-import { installNotifications } from "@/composables/useNotifications";
 import { installRouter } from "./router";
-import "@/plugins/extend-prototype/index";
+import "@/plugins/prototypes/index";
+import { setupLoading } from "./composables/useLoading";
+import { installVueI18n } from "./composables/useI18n";
 const app = createApp(App);
 
+setupLoading(app);
 installPinia(app);
-installNotifications(app);
 installRouter(app);
 setupDebounceThrottleDirectives(app);
-
+installVueI18n(app);
 app.mount("#app");
