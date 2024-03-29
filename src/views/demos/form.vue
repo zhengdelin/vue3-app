@@ -21,7 +21,7 @@
       placeholder="請輸入密碼"
       :error-message="$utils.errorMessages.password[0]"
       type="password"
-      size="medium"
+      size="small"
     />
 
     <Btn type="submit">提交</Btn>
