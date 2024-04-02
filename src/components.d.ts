@@ -12,6 +12,7 @@ declare module '@vue/runtime-core' {
     AsyncRouterView: typeof import('./components/AsyncRouterView.vue')['default']
     Btn: typeof import('./components/Btn.vue')['default']
     Confirm: typeof import('./components/modal/Confirm.vue')['default']
+    HighlightSearchText: typeof import('./components/HighlightSearchText.vue')['default']
     InputRadio: typeof import('./components/input/Radio.vue')['default']
     InputRadioGroup: typeof import('./components/input/RadioGroup.vue')['default']
     InputTextField: typeof import('./components/input/TextField.vue')['default']
@@ -22,5 +23,6 @@ declare module '@vue/runtime-core' {
     Overlay: typeof import('./components/Overlay.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    TableContainer: typeof import('./components/TableContainer/index.vue')['default']
   }
 }

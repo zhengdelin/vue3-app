@@ -5,11 +5,11 @@ import ModalContainer from "@/composables/useModal/components/ModalContainer.vue
 </script>
 
 <template>
-  <div class="h-screen flex items-center justify-center">
+  <div class="min-h-screen flex justify-center my-28">
     <div class="flex flex-col items-center gap-4">
-      <div class="flex justify-center gap-2">
+      <div class="flex items-center gap-2 flex-wrap">
         <RouterLink v-for="route in routes" :key="route.name" class="btn" :to="{ name: route.name }">
-          <Btn>{{ route.name }}</Btn>
+          <Btn>{{ route.path }}</Btn>
         </RouterLink>
       </div>
       <RouterView></RouterView>

@@ -63,13 +63,13 @@
       </div>
     </label>
     <div class="error-messages">
-      <IconExclamationTriangleFill></IconExclamationTriangleFill>
+      <!-- <IconExclamationTriangleFill></IconExclamationTriangleFill> -->
       <span>{{ errorMessage }}</span>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { debounce } from "@/composables/useDebounceThrottle";
+import { debounce as useDebounce } from "@/composables/useDebounceThrottle";
 type Trigger = "change" | "input";
 interface InputText {
   modelValue?: any;
@@ -146,7 +146,7 @@ const onChange = (() => {
 })();
 const onInput = (() => {
   if (props.trigger === "input") {
-    if (props.debounce) return debounce(output, { immediately: false, delay: props.debounceInterval });
+    if (props.debounce) return useDebounce(output, { immediately: false, delay: props.debounceInterval });
     return output;
   }
 })();
@@ -206,7 +206,9 @@ defineExpose({
   --text-field-input-pt: calc(var(--text-field-label-height) + var(--text-field-input-py));
   --text-field-input-pb: var(--text-field-input-py);
 
-  --text-field-input-field-height: calc(var(--text-field-input-height) + var(--text-field-input-pt) + var(--text-field-input-pb));
+  --text-field-input-field-height: calc(
+    var(--text-field-input-height) + var(--text-field-input-pt) + var(--text-field-input-pb)
+  );
 
   position: relative;
   width: 100%;
