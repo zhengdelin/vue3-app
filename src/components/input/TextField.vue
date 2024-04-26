@@ -195,48 +195,46 @@ defineExpose({
   $input-padding-left: 16px;
   $input-padding-right: $input-padding-left;
 
-  // --text-field-height: 40px;
-  --text-field-error-color: rgb(239, 68, 68);
-  --text-field-error-border-color: rgb(239, 68, 68);
-  --text-field-label-color: rgb(209, 213, 219);
-  --text-field-placeholder-color: rgb(107, 114, 128);
-  --text-field-focus-border-color: rgb(59, 130, 246);
-  --text-field-input-pl: #{$input-padding-left};
-  --text-field-input-pr: #{$input-padding-right};
-  --text-field-input-pt: calc(var(--text-field-label-height) + var(--text-field-input-py));
-  --text-field-input-pb: var(--text-field-input-py);
+  // --height: 40px;
+  --error-color: rgb(239, 68, 68);
+  --error-border-color: rgb(239, 68, 68);
+  --label-color: rgb(209, 213, 219);
+  --placeholder-color: rgb(107, 114, 128);
+  --focused-border-color: rgb(59, 130, 246);
+  --input-pl: #{$input-padding-left};
+  --input-pr: #{$input-padding-right};
+  --input-pt: calc(var(--label-height) + var(--input-py));
+  --input-pb: var(--input-py);
 
-  --text-field-input-field-height: calc(
-    var(--text-field-input-height) + var(--text-field-input-pt) + var(--text-field-input-pb)
-  );
+  --input-field-height: calc(var(--input-height) + var(--input-pt) + var(--input-pb));
 
   position: relative;
   width: 100%;
-  // height: var(--text-field-height, 40px);
+  // height: var(--height, 40px);
 
   &.large {
     // 60px
-    --text-field-input-py: 6px;
-    --text-field-input-height: 28px;
-    --text-field-label-height: 18px;
+    --input-py: 6px;
+    --input-height: 28px;
+    --label-height: 18px;
   }
   &.medium {
     // 52px
-    --text-field-input-py: 5px;
-    --text-field-label-height: 16px;
-    --text-field-input-height: 24px;
+    --input-py: 5px;
+    --label-height: 16px;
+    --input-height: 24px;
   }
 
   &.small {
     // 44px
-    --text-field-input-py: 4px;
-    --text-field-label-height: 14px;
-    --text-field-input-height: 20px;
+    --input-py: 4px;
+    --label-height: 14px;
+    --input-height: 20px;
   }
 
   .error-messages {
     @apply text-p3;
-    color: var(--text-field-error-color);
+    color: var(--error-color);
     display: flex;
     gap: 4px;
     height: 0;
@@ -250,7 +248,7 @@ defineExpose({
     height: 24px;
   }
   &.is-error &__input-control {
-    border-color: var(--text-field-error-border-color);
+    border-color: var(--error-border-color);
   }
 
   &__input-control {
@@ -271,17 +269,17 @@ defineExpose({
     }
 
     &:not(.is-labeled) {
-      --text-field-input-pt: var(--text-field-input-py);
+      --input-pt: var(--input-py);
     }
     &.is-prepended {
       padding-left: $appendedPrependedPadding;
-      --text-field-input-pl: #{math.div($input-padding-left, 2)};
+      --input-pl: #{math.div($input-padding-left, 2)};
     }
 
     &.is-appended,
     &.is-clearable {
       padding-right: $appendedPrependedPadding;
-      --text-field-input-pr: #{math.div($input-padding-right, 2)};
+      --input-pr: #{math.div($input-padding-right, 2)};
     }
 
     .field {
@@ -289,20 +287,20 @@ defineExpose({
       flex-direction: column;
       width: 100%;
       position: relative;
-      height: var(--text-field-input-field-height);
+      height: var(--input-field-height);
 
       .label {
         font-size: 14px;
         line-height: 20px;
-        color: var(--text-field-label-color);
+        color: var(--label-color);
         font-weight: bold;
         touch-action: none;
         pointer-events: none;
         z-index: 10;
         position: absolute;
-        // top: calc(var(--text-field-label-height));
-        top: calc(50% - var(--text-field-label-height) / 2);
-        margin-left: var(--text-field-input-pl);
+        // top: calc(var(--label-height));
+        top: calc(50% - var(--label-height) / 2);
+        margin-left: var(--input-pl);
         transition-property: top, font-size, line-height;
         transition-duration: $transition-duration;
         transition-timing-function: ease-out;
@@ -313,22 +311,22 @@ defineExpose({
         display: flex;
         align-items: center;
         flex: 1;
-        padding-top: var(--text-field-input-pt);
-        padding-bottom: var(--text-field-input-pb);
-        padding-left: var(--text-field-input-pl);
-        padding-right: var(--text-field-input-pr);
+        padding-top: var(--input-pt);
+        padding-bottom: var(--input-pb);
+        padding-left: var(--input-pl);
+        padding-right: var(--input-pr);
         background: inherit;
         cursor: text;
 
         :deep(.input-original) {
           &::placeholder {
-            color: var(--text-field-placeholder-color);
+            color: var(--placeholder-color);
             font-size: inherit;
             line-height: inherit;
           }
 
           font-size: 16px;
-          line-height: var(--text-field-input-height);
+          line-height: var(--input-height);
           outline: none;
           border: none;
           width: 100%;
@@ -343,7 +341,7 @@ defineExpose({
     }
 
     &.is-focus {
-      border-color: var(--text-field-focus-border-color);
+      border-color: var(--focused-border-color);
     }
 
     &.is-focus,
@@ -351,9 +349,9 @@ defineExpose({
     &.is-active {
       .field {
         .label {
-          top: var(--text-field-input-py);
+          top: var(--input-py);
           font-size: 12px;
-          line-height: var(--text-field-label-height);
+          line-height: var(--label-height);
         }
 
         .input input::placeholder {
@@ -364,7 +362,7 @@ defineExpose({
 
     &.is-required .label::after {
       @apply text-p2;
-      color: var(--text-field-error-color);
+      color: var(--error-color);
 
       content: "*";
       position: absolute;

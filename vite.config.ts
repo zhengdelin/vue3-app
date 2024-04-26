@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
+import vueJsx from "@vitejs/plugin-vue-jsx";
 import { resolve } from "path";
 import viteCompression from "vite-plugin-compression";
 
@@ -49,6 +50,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       vue(),
+      vueJsx(),
       // gzip压缩 生产环境生成 .gz 文件
       viteCompression(),
       ...UnpluginAutoImport,

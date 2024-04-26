@@ -6,7 +6,11 @@ import useToggleScope from "@/composables/useToggleScope";
 /**
  * 表示 useVModel 可組合函數的配置選項。
  */
-export interface UseVModel<Props extends Record<string, any>, PropName extends keyof Props = keyof Props, Inner = Props[PropName]> {
+export interface UseVModel<
+  Props extends Record<string, any>,
+  PropName extends keyof Props = keyof Props,
+  Inner = Props[PropName],
+> {
   props: Props;
   propName?: PropName;
   emit?: any;
@@ -23,10 +27,19 @@ export interface UseVModel<Props extends Record<string, any>, PropName extends k
  * @param {UseVModel<Props, PropName, Inner>} options - 用於配置 useVModel 可組合函數的選項。
  * @returns {WritableComputedRef<Inner>} - 表示計算值的 WritableComputedRef 物件。
  */
-export function useVModel<Props extends Record<string, any>, PropName extends keyof Props = "modelValue", Inner = Props[PropName]>(
-  options: UseVModel<Props, PropName, Inner>,
-): WritableComputedRef<Inner> {
-  const { props, propName = "modelValue" as PropName, emit, setter, transformIn = (v) => v, transformOut = (v) => v as Props[PropName] } = options;
+export function useVModel<
+  Props extends Record<string, any>,
+  PropName extends keyof Props = "modelValue",
+  Inner = Props[PropName],
+>(options: UseVModel<Props, PropName, Inner>): WritableComputedRef<Inner> {
+  const {
+    props,
+    propName = "modelValue" as PropName,
+    emit,
+    setter,
+    transformIn = (v) => v,
+    transformOut = (v) => v as Props[PropName],
+  } = options;
   const vm = getCurrentInstance();
 
   // 如果未傳遞 VModel，則創建內部模型
