@@ -2,6 +2,8 @@
 import { routes } from "@/router";
 import MessageContainer from "@/composables/useMessage/components/MessageContainer.vue";
 import ModalContainer from "@/composables/useModal/components/ModalContainer.vue";
+
+const data = ref("");
 </script>
 
 <template>
@@ -13,10 +15,12 @@ import ModalContainer from "@/composables/useModal/components/ModalContainer.vue
         </RouterLink>
       </div>
       <RouterView></RouterView>
+      <!-- <InputTextField v-model="data" label="文字" placeholder="請輸入文字"> </InputTextField>
+      <InputTextareaField v-model="data" label="文字" placeholder="請輸入文字"> </InputTextareaField> -->
     </div>
   </div>
   <MessageContainer />;
   <ModalContainer></ModalContainer>
 </template>
 
-<style scoped></style>
+<style></style>

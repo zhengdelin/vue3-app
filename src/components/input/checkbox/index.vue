@@ -215,6 +215,7 @@ injection.registerChild({
       -webkit-appearance: none;
       -webkit-tap-highlight-color: transparent;
       border-radius: inherit;
+      margin: 0;
     }
 
     .inner {

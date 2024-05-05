@@ -7,18 +7,18 @@
     <InputControl
       v-bind="{ ...inputControlProps, ...inputControlContext.emitEvents, active: isActive }"
       ref="inputControlRef"
-      class="text-field"
+      class="textarea-field"
     >
       <template #default="{ onBlur, onFocus, props: controlProps }">
         <slot name="input" :on-focus="onFocus" :on-blur="onBlur">
-          <input
-            :value="modelValue"
+          <textarea
+            v-model="modelValue"
             v-bind="{ ...controlProps, ...inputProps }"
             @input="onInput"
             @change="onChange"
             @focus.stop="onFocus"
             @blur.stop="onBlur"
-          />
+          ></textarea>
           <!-- <textarea id="" name="" cols="30" rows="10"></textarea> -->
         </slot>
       </template>
@@ -42,13 +42,12 @@ import {
   createInputControlContext,
 } from "./control/composables";
 import InputControl from "@/components/input/control/index.vue";
-import { createCanDebounceInput, CanDebounceInputProps } from "./composables";
+import { CanDebounceInputProps, createCanDebounceInput } from "./composables";
 
 type ModelValueType = any;
 
 interface InputTextField {
   modelValue?: ModelValueType;
-  type?: string;
   placeholder?: string;
   autoFocus?: boolean;
 
@@ -60,7 +59,6 @@ const props = withDefaults(
   {
     ...INPUT_CONTROL_PROPS_DEFAULT,
     ...INPUT_CONTAINER_PROPS_DEFAULT,
-    type: "text",
     placeholder: "",
     autoFocus: false,
     trigger: "input",
@@ -77,9 +75,9 @@ type InputTextFieldEmits = InputContainerEmits &
   InputControlEmits & {
     (e: "update:modelValue", value: ModelValueType): void;
   };
-
 const emit = defineEmits<InputTextFieldEmits>();
 const slots = useSlots();
+
 // 透傳
 // container
 const inputContainerContext = createInputContainerContext(props, emit, slots);
@@ -108,7 +106,6 @@ const inputProps = computed(() => {
   // const propsClass = _props?.class ? (Array.isArray(_props?.class) ? _props?.class.join(" ") : _props?.class) : "";
   const p = {
     placeholder: props.placeholder,
-    type: props.type,
     ..._props,
   } as Record<string, any>;
   if (props.autoFocus) {
@@ -128,14 +125,14 @@ defineExpose({
 $text-color: rgb(55, 65, 81);
 $placeholder-color: rgb(107, 114, 128);
 
-.text-field {
+.textarea-field {
   // &.is-disabled {
   //   input {
   //   }
   // }
 
-  input {
-    padding-top: var(--input-field-padding-top);
+  textarea {
+    padding-top: calc(var(--input-field-padding-top) + 5px);
     padding-bottom: var(--input-field-padding-bottom);
     padding-inline-start: var(--input-field-padding-start);
     padding-inline-end: var(--input-field-padding-end);
@@ -145,9 +142,10 @@ $placeholder-color: rgb(107, 114, 128);
     width: 100%;
     background: inherit;
     height: max(
-      var(--input-control-height),
+      calc(var(--input-control-height)),
       1.5rem + var(--input-field-padding-top) + var(--input-field-padding-bottom)
     );
+    // resize: none;
   }
 }
 </style>
