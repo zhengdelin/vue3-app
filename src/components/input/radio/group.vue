@@ -5,8 +5,11 @@
 </template>
 <script setup lang="ts">
 import { useVModel } from "@/composables/useVModel";
+import { provideRadioGroup } from "./composables";
 interface RadioGroup {
-  modelValue: any;
+  modelValue?: any;
+  readonly?: boolean;
+  disabled?: boolean;
   direction?: "vertical" | "horizontal";
 }
 
@@ -17,7 +20,7 @@ const props = withDefaults(defineProps<RadioGroup>(), {
 
 const modelValue = useVModel({ props, emit });
 
-provide("modelValue", modelValue);
+provideRadioGroup({ modelValue, readonly: computed(() => props.readonly), disabled: computed(() => props.disabled) });
 </script>
 <style scoped lang="scss">
 .radio-group {

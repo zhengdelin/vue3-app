@@ -1,6 +1,6 @@
 <template>
   <div class="table-container">
-    <div v-if="!hideTop" class="flex flex-col gap-8">
+    <div v-if="!hideTop" class="flex flex-col gap-8" v-bind="footerProps">
       <div v-if="title" class="flex gap-4">
         <div class="title">{{ title }}</div>
       </div>
@@ -16,17 +16,24 @@
       <table class="table" border="0">
         <thead>
           <tr class="table--row">
-            <th class="table--th w-10">
+            <!-- select col -->
+            <th v-if="selectable" class="table--th table--select">
+              <div><InputCheckbox select-all></InputCheckbox></div>
+            </th>
+            <!-- index col -->
+            <th v-if="showIndex" class="table--th table--index">
               <div>#</div>
             </th>
+            <!-- columns -->
             <th
               v-for="column in tableColumns"
               :key="column.key"
-              :class="['table--th', `table--${column.headerAlignment}`]"
+              :class="['table--th', `table--align-${column.headerAlignment}`]"
               :style="column.styles"
             >
               <div>{{ column.label }}</div>
             </th>
+            <!-- action col -->
             <th v-if="showAction" class="table--th w-20">
               <div>操作</div>
             </th>
@@ -35,17 +42,23 @@
         <tbody>
           <template v-if="paginatedData.length">
             <tr v-for="(item, index) in paginatedData" :key="item" class="table--row">
-              <td class="table--td">
+              <!-- select col -->
+              <td class="table--td table--select" v-if="selectable">
+                <div><InputCheckbox :value="item"></InputCheckbox></div>
+              </td>
+              <!-- index col -->
+              <td class="table--td table--index" v-if="showIndex">
                 <div>{{ index + 1 }}</div>
               </td>
+              <!-- columns -->
               <td
                 v-for="column in tableColumns"
                 :key="column.key"
-                :class="['table--td', `table--${column.contentAlignment}`]"
+                :class="['table--td', `table--align-${column.contentAlignment}`]"
                 :style="column.styles"
               >
                 <div>
-                  <slot :name="column.key" :item="item" :value="item[column.key]">
+                  <slot :name="'item.' + column.key" :item="item" :value="item[column.key]">
                     <HighlightSearchText
                       :text="item[column.key]"
                       :search-text="searchText"
@@ -56,11 +69,11 @@
                   </slot>
                 </div>
               </td>
+              <!-- action col -->
               <td v-if="showAction" class="table--td">
                 <div class="flex justify-center gap-3">
                   <slot name="action" :item="item">
-                    <!-- <SvgItem type="edit" class="text-blue-500"></SvgItem> -->
-                    <!-- <SvgItem type="delete" class="text-red-500"></SvgItem> -->
+                    <!--  -->
                   </slot>
                 </div>
               </td>
@@ -76,7 +89,7 @@
         </tbody>
       </table>
     </div>
-    <div v-if="!hideFooter" :class="['bg-white flex gap-2 justify-between items-center', footerClass]">
+    <div v-if="!hideFooter" class="bg-white flex gap-2 justify-between items-center" v-bind="footerProps">
       <div>目前顯示{{ startIndex + 1 }}-{{ stopIndex }}條，共{{ pageCount }}頁</div>
       <div class="flex gap-1 items-center">
         <template v-for="i in pageCount" :key="i">
@@ -94,12 +107,14 @@ import { computed, ref, toRefs } from "vue";
 import { useSearchFilter, UseSearchFilterConfig } from "@/composables/useSearchFilter";
 import { createPagination, usePagination, usePaginatedItems } from "@/composables/usePagination";
 import type { ColumnOptions, ColumnItem, TableColumnAlignment } from "./types";
+import { provideCheckboxGroup } from "../input/checkbox/composables";
+import { useVModel } from "@/composables/useVModel";
 
 interface Props {
+  title?: string;
+  dataSource: any[];
   columns: ColumnItem[];
   columnAlignment?: TableColumnAlignment;
-  dataSource: any[];
-  title?: string;
   contentDefaultText?: string;
 
   // search
@@ -108,28 +123,43 @@ interface Props {
   searchPlaceholder?: string;
   searchConfig?: UseSearchFilterConfig;
 
+  // show
+  showIndex?: boolean;
   showAction?: boolean;
-
   hideTop?: boolean;
   hideFooter?: boolean;
-  footerClass?: string;
+
+  footerProps?: Record<string, any>;
+  headerProps?: Record<string, any>;
+
+  itemsPerPage?: number;
 
   noDataText?: string;
+
+  // select
+  selectable?: boolean;
+  selectedItems?: any[];
 }
 const props = withDefaults(defineProps<Props>(), {
   columnAlignment: "start",
   showAction: true,
   searchText: undefined,
   searchConfig: () => ({ ignoreCase: true }),
+
   showSearch: true,
+  showIndex: true,
+  selectable: false,
   searchPlaceholder: "搜尋...",
   contentDefaultText: "-",
   title: "",
   hideTop: false,
   hideFooter: false,
-  footerClass: "",
+  footerProps: undefined,
+  headerProps: undefined,
   noDataText: "No data",
+  itemsPerPage: 10,
 });
+const emit = defineEmits(["update:selectedItems"]);
 
 const { columns, dataSource: _dataSource } = toRefs(props);
 
@@ -158,9 +188,8 @@ const tableColumns = computed(() => {
   });
 });
 
-//搜尋的key
+//搜尋
 const searchKeys = computed(() => tableColumns.value.filter((i) => i.search).map((i) => i.key as string));
-
 const _searchText = ref("");
 const searchText = computed({
   get() {
@@ -177,8 +206,9 @@ const dataSourceSearched = computed(() => {
   } else return _dataSource.value;
 });
 
-const { page, itemsPerPage, itemsLength } = createPagination({ itemsLength: dataSourceSearched.value.length });
-const { startIndex, stopIndex, setPage, setItemsPerPage, nextPage, prevPage, pageCount } = usePagination({
+// 分頁
+const { page, itemsPerPage, itemsLength } = createPagination({ itemsLength: dataSourceSearched.value.length, ...props });
+const { startIndex, stopIndex, setPage, pageCount } = usePagination({
   page,
   itemsLength,
   itemsPerPage,
@@ -189,6 +219,20 @@ const { paginatedItems: paginatedData } = usePaginatedItems({
   startIndex,
   stopIndex,
 });
+
+// select
+const selectedItems = useVModel({
+  props,
+  propName: "selectedItems",
+  emit,
+});
+if (props.selectable) {
+  provideCheckboxGroup({
+    modelValue: selectedItems,
+    readonly: computed(() => false),
+    disabled: computed(() => false),
+  });
+}
 </script>
 
 <style lang="scss">
@@ -208,13 +252,13 @@ const { paginatedItems: paginatedData } = usePaginatedItems({
       border-collapse: collapse;
 
       @mixin table-alignment() {
-        &.table--start {
+        &.table--align-start {
           text-align: left;
         }
-        &.table--center {
+        &.table--align-center {
           text-align: center;
         }
-        &.table--end {
+        &.table--align-end {
           text-align: right;
         }
       }
@@ -233,9 +277,7 @@ const { paginatedItems: paginatedData } = usePaginatedItems({
         .table--td,
         .table--th {
           @include table-alignment();
-          &:first-child {
-            text-align: center;
-          }
+
           //用border會有一粗一細的問題
           // border-bottom: 1px solid #e0e0e0;
           box-shadow: inset 0px -1px 0px #e0e0e0;
@@ -246,9 +288,21 @@ const { paginatedItems: paginatedData } = usePaginatedItems({
 
         &:hover {
           .table--td {
-            @apply bg-slate-50;
-            // background-color: rgb(203, 213, 225);
+            background-color: rgb(245, 254, 255);
           }
+        }
+
+        .table--select {
+          width: 56px;
+          > div {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+        }
+
+        .table--index {
+          width: 40px;
         }
       }
     }

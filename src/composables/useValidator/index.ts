@@ -112,7 +112,10 @@ export function getValidatorModel($v: UnwrapValidator) {
   return $v.$model;
 }
 
-export function getValidatorUtils<Key extends string, ValidatorT extends UnwrapValidator>(ruleKeys: ValidatorRuleKey<Key>[], $validator: ValidatorT) {
+export function getValidatorUtils<Key extends string, ValidatorT extends UnwrapValidator>(
+  ruleKeys: ValidatorRuleKey<Key>[],
+  $validator: ValidatorT,
+) {
   const utils = {
     errorMessages: {},
     models: {},

@@ -29,3 +29,24 @@ body {
   width: 100%;
   height: 100%;
 }
+
+.revert-browser-stylesheets,
+.revert-browser-stylesheets p,
+.revert-browser-stylesheets h1,
+.revert-browser-stylesheets h2,
+.revert-browser-stylesheets h3,
+.revert-browser-stylesheets h4,
+.revert-browser-stylesheets h5,
+.revert-browser-stylesheets h6,
+.revert-browser-stylesheets pre {
+  line-height: revert;
+  font-size: revert;
+  font-weight: revert;
+  list-style: revert;
+  margin: revert;
+  padding: revert;
+  color: inherit;
+  text-decoration: inherit;
+  word-break: break-all;
+  text-align: revert;
+}

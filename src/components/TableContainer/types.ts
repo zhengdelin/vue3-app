@@ -1,6 +1,6 @@
 export type TableColumnAlignment = "start" | "end" | "center";
 export interface ColumnOptions<T = any> {
-  key: keyof T;
+  key: keyof T & string;
   label: string;
   /**
    * 是否可搜索

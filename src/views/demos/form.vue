@@ -48,7 +48,7 @@ const { $utils } = useValidator(
   data,
 );
 
-const onSubmit = (e: Event) => {
+const onSubmit = () => {
   $message.success(`提交成功, ${data.email}`);
 };
 </script>

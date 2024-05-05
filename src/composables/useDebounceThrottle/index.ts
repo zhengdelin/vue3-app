@@ -13,7 +13,7 @@ export function debounce<ThisType, ArgumentType>(
   config: DebounceConfig = { delay: 1000, immediately: true },
 ) {
   const { delay = 1000, immediately = true } = config;
-  let timer: number | null | NodeJS.Timeout = null;
+  let timer: number | null = null;
   // 點擊第一次執行
   if (immediately) {
     return function (this: ThisType, ...args: ArgumentType[]) {
@@ -24,7 +24,7 @@ export function debounce<ThisType, ArgumentType>(
 
       if (firstClick) fn.apply(this, args); // 綁定實際使用的函數的this及arguments
 
-      timer = setTimeout(() => {
+      timer = window.setTimeout(() => {
         // console.log("timer setTimeout", timer);
         timer = null;
       }, delay);
@@ -36,7 +36,7 @@ export function debounce<ThisType, ArgumentType>(
 
     // 刷新timer
     // 如果delay時間內再次點擊，則會再次刷新timer，而不會執行fn
-    timer = setTimeout(() => {
+    timer = window.setTimeout(() => {
       // 綁定實際使用的函數的this及arguments
       fn.apply(this, args);
     }, delay);
