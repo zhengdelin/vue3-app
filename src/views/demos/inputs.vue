@@ -16,7 +16,7 @@
           <InputTextField v-model="data.text" disabled></InputTextField>
         </div>
         <div class="">
-          <h3>唯獨</h3>
+          <h3>唯讀</h3>
           <InputTextField v-model="data.text" readonly></InputTextField>
         </div>
         <div class="">

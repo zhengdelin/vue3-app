@@ -99,7 +99,8 @@ $input-padding-start: 16px;
 $input-padding-end: $input-padding-start;
 $appendedPrependedPadding: $input-padding-start * 0.75;
 
-.input--control {
+$prefix: "input";
+.#{$prefix}--control {
   // 基本顏色設定
   --text-color: #{$text-color};
   --label-color: #{$label-color};
@@ -138,15 +139,19 @@ $appendedPrependedPadding: $input-padding-start * 0.75;
   --errored-border-color: rgb(239, 68, 68);
 }
 
-.input--control {
-  --input-field-label-size: 0px;
+.#{$prefix}--control {
   --input-field-label-height: calc(var(--input-field-label-size) * 1.5);
+  // label 預設垂直置中對齊
+  --input-field-label-top: calc(50% - (var(--input-field-label-height) / 2) - 1px);
+  // label 在active、focus時的垂直高度
   --input-field-label-floating-top: 7px;
 
   --input-field-padding-start: #{$input-padding-start};
   --input-field-padding-end: #{$input-padding-end};
-  --input-field-padding-top: calc(4px + var(--input-field-label-size, 0px));
-  --input-field-padding-bottom: 4px;
+  --input-field-py: 4px;
+  --input-field-padding-top: calc(var(--input-field-py) + var(--input-field-label-height));
+  // --input-field-padding-top: calc(8px + var(--input-container-padding-top));
+  --input-field-padding-bottom: var(--input-field-py);
 
   grid-area: control;
   display: flex;
@@ -174,39 +179,13 @@ $appendedPrependedPadding: $input-padding-start * 0.75;
     }
   }
 
+  &:not(.is-labeled) {
+    --input-field-label-size: 0px !important;
+  }
+
   // &:not(.is-labeled) .input--field {
   //   --input-field-label-size: 0px;
   // }
-
-  .input--field {
-    display: flex;
-    flex: 1;
-    width: 100%;
-    position: relative;
-    color: var(--text-color);
-    // height: var(--input-field-height);
-
-    ::placeholder {
-      color: var(--placeholder-color);
-    }
-
-    .label {
-      font-size: var(--input-field-label-size);
-      color: var(--label-color);
-      font-weight: bold;
-      touch-action: none;
-      pointer-events: none;
-      z-index: 10;
-      position: absolute;
-      top: calc(50% - (var(--input-field-label-height) / 2) - 1px);
-      margin-inline-start: var(--input-field-padding-start);
-      margin-inline-end: var(--input-field-padding-end);
-      transition-property: top, font-size, line-height;
-      transition-duration: 100ms;
-      transition-timing-function: ease-out;
-      white-space: nowrap;
-    }
-  }
 
   &.is-bordered {
     outline: 1px solid var(--border-color);
@@ -222,10 +201,10 @@ $appendedPrependedPadding: $input-padding-start * 0.75;
   &.is-focus,
   &.is-always-focus,
   &.is-active {
-    .input--field {
-      --input-field-label-size: 12px;
+    --input-field-label-size: 12px;
+    .#{$prefix}--field {
       .label {
-        top: var(--input-field-label-floating-top);
+        --input-field-label-top: var(--input-field-label-floating-top);
       }
 
       ::placeholder {
@@ -274,8 +253,13 @@ $appendedPrependedPadding: $input-padding-start * 0.75;
   .prepend-inner,
   .append-inner,
   .clearable {
-    display: flex;
-    align-items: center;
+    // display: flex;
+    // align-items: center;
+    padding-top: var(--input-container-padding-top);
+    > svg {
+      vertical-align: sub;
+      display: inline-block;
+    }
   }
 
   .append-inner,
@@ -291,10 +275,62 @@ $appendedPrependedPadding: $input-padding-start * 0.75;
   }
 }
 
+.#{$prefix}--field {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  position: relative;
+  color: var(--text-color);
+  // height: var(--input-field-height);
+
+  ::placeholder {
+    color: var(--placeholder-color);
+  }
+
+  .label {
+    font-size: var(--input-field-label-size);
+    color: var(--label-color);
+    font-weight: bold;
+    touch-action: none;
+    pointer-events: none;
+    z-index: 10;
+    position: absolute;
+    top: var(--input-field-label-top);
+    // top: var(--input-field-padding-top);
+    margin-inline-start: var(--input-field-padding-start);
+    margin-inline-end: var(--input-field-padding-end);
+    transition-property: top, font-size, line-height;
+    transition-duration: 100ms;
+    transition-timing-function: ease-out;
+    white-space: nowrap;
+  }
+
+  &-input {
+    padding-top: var(--input-field-padding-top);
+    padding-bottom: var(--input-field-padding-bottom);
+    padding-inline-start: var(--input-field-padding-start);
+    padding-inline-end: var(--input-field-padding-end);
+    width: 100%;
+    background: inherit;
+    height: max(
+      var(--input-control-height),
+      1.5rem + var(--input-field-padding-top) + var(--input-field-padding-bottom)
+    );
+  }
+}
+
 .input--container {
   &.large {
     .input--control {
       // --input-field-label-floating-top: 10px;
+      // --input-field
+    }
+  }
+
+  &.small {
+    .input--control {
+      --input-field-label-floating-top: 4px;
+      --input-field-py: 2px;
     }
   }
 }

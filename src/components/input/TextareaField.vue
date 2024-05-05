@@ -1,5 +1,5 @@
 <template>
-  <InputContainer v-bind="{ ...inputContainerProps, ...inputContainerContext.emitEvents }">
+  <InputContainer v-bind="{ ...inputContainerProps, ...inputContainerContext.emitEvents }" class="textarea-field">
     <template v-for="(_, slotName) in inputContainerContext.slots" #[`${slotName}`]="slotProps">
       <slot :name="slotName" v-bind="slotProps"></slot>
     </template>
@@ -7,7 +7,6 @@
     <InputControl
       v-bind="{ ...inputControlProps, ...inputControlContext.emitEvents, active: isActive }"
       ref="inputControlRef"
-      class="textarea-field"
     >
       <template #default="{ onBlur, onFocus, props: controlProps }">
         <slot name="input" :on-focus="onFocus" :on-blur="onBlur">
@@ -103,10 +102,11 @@ const isActive = computed(() => modelValue.value !== "" && modelValue.value !== 
 
 const inputProps = computed(() => {
   const _props = props.inputProps || {};
-  // const propsClass = _props?.class ? (Array.isArray(_props?.class) ? _props?.class.join(" ") : _props?.class) : "";
+  const propsClass = _props?.class ? (Array.isArray(_props?.class) ? _props?.class.join(" ") : _props?.class) : "";
   const p = {
     placeholder: props.placeholder,
     ..._props,
+    class: ["input--field-input", propsClass],
   } as Record<string, any>;
   if (props.autoFocus) {
     p.autoFocus = props.autoFocus;
@@ -131,20 +131,16 @@ $placeholder-color: rgb(107, 114, 128);
   //   }
   // }
 
+  .input--control {
+    --input-field-label-top: calc(var(--input-field-padding-top));
+  }
+
   textarea {
-    padding-top: calc(var(--input-field-padding-top) + 5px);
-    padding-bottom: var(--input-field-padding-bottom);
-    padding-inline-start: var(--input-field-padding-start);
-    padding-inline-end: var(--input-field-padding-end);
     color: inherit;
     outline: none;
     border: none;
-    width: 100%;
-    background: inherit;
-    height: max(
-      calc(var(--input-control-height)),
-      1.5rem + var(--input-field-padding-top) + var(--input-field-padding-bottom)
-    );
+    padding-top: calc(var(--input-field-padding-top) + 5px);
+    height: 300px;
     // resize: none;
   }
 }

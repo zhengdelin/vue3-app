@@ -15,8 +15,8 @@ const data = ref("");
         </RouterLink>
       </div>
       <RouterView></RouterView>
-      <!-- <InputTextField v-model="data" label="文字" placeholder="請輸入文字"> </InputTextField>
-      <InputTextareaField v-model="data" label="文字" placeholder="請輸入文字"> </InputTextareaField> -->
+      <InputTextField v-model="data" label="文字" placeholder="請輸入文字"> </InputTextField>
+      <InputTextareaField v-model="data" label="文字" placeholder="請輸入文字"> </InputTextareaField>
     </div>
   </div>
   <MessageContainer />;

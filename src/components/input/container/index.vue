@@ -60,17 +60,17 @@ $error-text-color: rgb(239, 68, 68);
   line-height: 1.5;
 
   &.large {
-    // --input-container-padding-top: 16px;
+    --input-container-padding-top: 20px;
     --input-control-height: 64px;
   }
 
   &.medium {
-    // --input-container-padding-top: 16px;
+    --input-container-padding-top: 16px;
     --input-control-height: 56px;
   }
 
   &.small {
-    // --input-container-padding-top: 16px;
+    --input-container-padding-top: 12px;
     --input-control-height: 48px;
   }
 
@@ -96,8 +96,7 @@ $error-text-color: rgb(239, 68, 68);
 
   .prepend,
   .append {
-    display: flex;
-    align-items: center;
+    padding-top: var(--input-container-padding-top);
   }
 
   .prepend {
