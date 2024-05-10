@@ -1,6 +1,6 @@
 <template>
   <form class="flex flex-col gap-4" @submit.prevent="onSubmit">
-    <InputTextField
+    <c-text-field
       v-model="data.name"
       label="姓名"
       placeholder="請輸入姓名"
@@ -8,14 +8,14 @@
       size="large"
       auto-focus
     />
-    <InputTextField
+    <c-text-field
       v-model="data.email"
       label="信箱"
       placeholder="請輸入信箱"
       :error-message="$utils.errorMessages.email[0]"
       size="medium"
     />
-    <InputTextField
+    <c-text-field
       v-model="data.password"
       label="密碼"
       placeholder="請輸入密碼"
@@ -24,12 +24,12 @@
       size="small"
     />
 
-    <Btn type="submit">提交</Btn>
+    <c-btn type="submit">提交</c-btn>
   </form>
 </template>
 <script setup lang="ts">
-import { $message } from "@/composables/useMessage";
-import { useValidator } from "@/composables/useValidator";
+import { $message } from "@/composable/useMessage";
+import { useValidator } from "@/composable/useValidator";
 
 //
 

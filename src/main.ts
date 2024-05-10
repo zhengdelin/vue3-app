@@ -2,12 +2,12 @@ import { createApp } from "vue";
 import "@/assets/styles/app.scss";
 import App from "./App.vue";
 import { installPinia } from "./store";
-import { setupDebounceThrottleDirectives } from "@/composables/useDebounceThrottle";
+import { setupDebounceThrottleDirectives } from "@/composable/useDebounceThrottle";
 import { installRouter } from "./router";
 import "@/plugins/prototypes/index";
-import { setupLoading } from "./composables/useLoading";
-import { installVueI18n } from "./composables/useI18n";
-import useValidationForm from "./composables/useValidationForm";
+import { setupLoading } from "./composable/useLoading";
+import { installVueI18n } from "./composable/useI18n";
+import useValidationForm from "./composable/useValidationForm";
 const app = createApp(App);
 
 setupLoading(app);

@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, CanceledError } from "axios";
-import { $message } from "@/composables/useMessage";
+import { $message } from "@/composable/useMessage";
 import { useStore } from "@/store";
 import { AxiosInterceptorsConfig } from "./types";
 

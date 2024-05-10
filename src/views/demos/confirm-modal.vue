@@ -1,9 +1,9 @@
 <template>
-  <Btn class="btn" @click="showModal">點我彈出確認視窗</Btn>
+  <c-btn class="btn" @click="showModal">點我彈出確認視窗</c-btn>
 </template>
 <script setup lang="ts">
-import { $confirm } from "@/composables/useConfirmModal";
-import { $message } from "@/composables/useMessage";
+import { $confirm } from "@/composable/useConfirmModal";
+import { $message } from "@/composable/useMessage";
 
 const showModal = () => {
   $confirm({

@@ -6,7 +6,7 @@
   </ValidationForm>
 </template>
 <script setup lang="ts">
-import useValidationForm from "@/composables/useValidationForm";
+import useValidationForm from "@/composable/useValidationForm";
 
 const data = ref({
   account: "",

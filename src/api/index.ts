@@ -1,7 +1,7 @@
 import { createUseAxiosAsyncData } from "use-axios-async-data";
 import global from "@/api/modules/global";
 import { useAxios } from "@/api/config";
-import { $message } from "@/composables/useMessage";
+import { $message } from "@/composable/useMessage";
 const $axios = useAxios("/api/zh-tw", {
   onRequestSuccess: (config) => {
     console.log("onRequestSuccess :>> ", config);

@@ -1,6 +1,6 @@
 import {
   deepClone,
-  isNullOrEmpty,
+  isObjectNullOrEmpty,
   isObject,
   isObjectEqual,
   getObject,
@@ -21,7 +21,7 @@ declare global {
     createFromPath: typeof createObjectFromPath;
     merge: typeof mergeObject;
     deepClone: typeof deepClone;
-    isNullOrEmpty: typeof isNullOrEmpty;
+    isNullOrEmpty: typeof isObjectNullOrEmpty;
   }
 }
 
@@ -33,4 +33,4 @@ Object.set = setObject;
 Object.createFromPath = createObjectFromPath;
 Object.merge = mergeObject;
 Object.deepClone = deepClone;
-Object.isNullOrEmpty = isNullOrEmpty;
+Object.isNullOrEmpty = isObjectNullOrEmpty;

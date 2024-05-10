@@ -3,28 +3,28 @@
     <div class="flex justify-between items-center">
       <h1 class="text-h2">切換Alignment</h1>
       <div class="flex gap-4">
-        <Btn @click="alignment = 'start'">Start</Btn>
-        <Btn @click="alignment = 'center'">Center</Btn>
-        <Btn @click="alignment = 'end'">End</Btn>
+        <c-btn @click="alignment = 'start'">Start</c-btn>
+        <c-btn @click="alignment = 'center'">Center</c-btn>
+        <c-btn @click="alignment = 'end'">End</c-btn>
       </div>
     </div>
-    <TableContainer
+    <c-table
       :columns="columns"
       :data-source="data"
       :column-alignment="alignment"
       :show-action="false"
       :show-search="false"
-    ></TableContainer>
+    ></c-table>
     <div class="flex justify-between items-center">
       <h1 class="text-h2">搜尋</h1>
       <div class="flex gap-4">
-        <Btn @click="searchConfig.show = !searchConfig.show">{{ searchConfig.show ? "隱藏" : "顯示" }}</Btn>
-        <Btn @click="searchConfig.ignoreCase = !searchConfig.ignoreCase">{{
+        <c-btn @click="searchConfig.show = !searchConfig.show">{{ searchConfig.show ? "隱藏" : "顯示" }}</c-btn>
+        <c-btn @click="searchConfig.ignoreCase = !searchConfig.ignoreCase">{{
           searchConfig.ignoreCase ? "不忽略大小寫" : "忽略大小寫"
-        }}</Btn>
+        }}</c-btn>
       </div>
     </div>
-    <TableContainer
+    <c-table
       :columns="columns"
       :data-source="data"
       :show-action="false"
@@ -32,12 +32,11 @@
       :search-config="{ ignoreCase: searchConfig.ignoreCase }"
     >
       <template #extra> this is extra slot </template>
-    </TableContainer>
+    </c-table>
   </div>
 </template>
 <script setup lang="ts">
-import TableContainer from "@/components/TableContainer/index.vue";
-import type { ColumnOptions, TableColumnAlignment } from "@/components/TableContainer/types";
+import type { ColumnOptions, TableColumnAlignment } from "@/ui/c-table/types";
 const alignment = ref("start" as TableColumnAlignment);
 
 const searchConfig = reactive({

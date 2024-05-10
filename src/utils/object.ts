@@ -5,7 +5,7 @@ import { toStringPath } from "./string";
  * @param data
  * @returns
  */
-export function isNullOrEmpty(data: unknown) {
+export function isObjectNullOrEmpty(data: unknown) {
   if (!data) return true;
   if (data instanceof Array) return data.length === 0;
   if (data instanceof Map) return data.size === 0;
@@ -13,6 +13,12 @@ export function isNullOrEmpty(data: unknown) {
   return !data;
 }
 
+export function isSet(data: unknown) {
+  if (typeof data === "undefined") return false;
+  if (typeof data === "string") return data !== "";
+  if (typeof data === "number") return data !== 0;
+  return;
+}
 
 export function deepClone<T>(val: T): T {
   const cache = new WeakMap();

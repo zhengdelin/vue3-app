@@ -1,6 +1,6 @@
 <template>
   <div>this is vue3 javascript setup</div>
-  <Btn @click="count++">{{ count }}</Btn>
+  <c-btn @click="count++">{{ count }}</c-btn>
 </template>
 <script setup>
 const count = ref(0);

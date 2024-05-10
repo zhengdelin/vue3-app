@@ -1,11 +1,11 @@
 <template>
-  <Btn @click="showSuccessMessage">點我彈出成功訊息</Btn>
-  <Btn @click="showErrorMessage">點我彈出失敗訊息</Btn>
-  <Btn @click="showWarningMessage">點我彈出警告訊息</Btn>
-  <Btn @click="showInfoMessage">點我彈出訊息訊息</Btn>
+  <c-btn @click="showSuccessMessage">點我彈出成功訊息</c-btn>
+  <c-btn @click="showErrorMessage">點我彈出失敗訊息</c-btn>
+  <c-btn @click="showWarningMessage">點我彈出警告訊息</c-btn>
+  <c-btn @click="showInfoMessage">點我彈出訊息訊息</c-btn>
 </template>
 <script setup lang="ts">
-import { $message } from "@/composables/useMessage";
+import { $message } from "@/composable/useMessage";
 function showSuccessMessage() {
   $message.success("成功訊息");
 }

@@ -21,7 +21,7 @@ const UnpluginAutoImport = [
     extensions: ["vue"],
     include: [/\.vue$/, /\.vue\?vue/],
     dts: resolve(__dirname, "./src/components.d.ts"),
-    dirs: [resolve(__dirname, "src/components")],
+    dirs: [resolve(__dirname, "src/components"), resolve(__dirname, "src/ui")],
     directoryAsNamespace: true,
     collapseSamePrefixes: true,
     resolvers: [],

@@ -9,54 +9,54 @@
       <div class="grid grid-cols-5 gap-4">
         <div class="">
           <h3>基本使用</h3>
-          <InputTextField v-model="data.text" label="文字" placeholder="請輸入文字" required></InputTextField>
+          <c-text-field v-model="data.text" label="文字" placeholder="請輸入文字" required></c-text-field>
         </div>
         <div class="">
           <h3>禁用</h3>
-          <InputTextField v-model="data.text" disabled></InputTextField>
+          <c-text-field v-model="data.text" disabled></c-text-field>
         </div>
         <div class="">
           <h3>唯讀</h3>
-          <InputTextField v-model="data.text" readonly></InputTextField>
+          <c-text-field v-model="data.text" readonly></c-text-field>
         </div>
         <div class="">
           <h3>關閉清除按鈕</h3>
-          <InputTextField v-model="data.text" :clearable="false"></InputTextField>
+          <c-text-field v-model="data.text" :clearable="false"></c-text-field>
         </div>
         <div class="">
           <h3>常駐focus</h3>
-          <InputTextField
+          <c-text-field
             v-model="data.text"
             always-focus
             label="常駐focus"
             placeholder="此輸入框會常駐focus"
-          ></InputTextField>
+          ></c-text-field>
         </div>
         <div class="">
           <h3>AutoFocus</h3>
-          <InputTextField
+          <c-text-field
             v-model="data.text"
             auto-focus
             label="文字"
             placeholder="這個輸入框會在頁面啟動時Focus"
-          ></InputTextField>
+          ></c-text-field>
         </div>
         <div class="">
           <h3>Error</h3>
-          <InputTextField v-model="data.text" error error-message="這是錯誤文字"></InputTextField>
+          <c-text-field v-model="data.text" error error-message="這是錯誤文字"></c-text-field>
         </div>
         <div class="">
           <h3>Debounce 輸入</h3>
-          <InputTextField
+          <c-text-field
             v-model="data.text"
             debounce
             label="文字"
             placeholder="這個輸入框會有 debounce 效果"
-          ></InputTextField>
+          ></c-text-field>
         </div>
         <div class="">
           <h3>Prepend Inner Icon</h3>
-          <InputTextField v-model="data.text">
+          <c-text-field v-model="data.text">
             <template #prepend-inner>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="20">
                 <path
@@ -64,11 +64,11 @@
                 />
               </svg>
             </template>
-          </InputTextField>
+          </c-text-field>
         </div>
         <div class="">
           <h3>Append Inner Icon</h3>
-          <InputTextField v-model="data.text">
+          <c-text-field v-model="data.text">
             <template #append-inner>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="20">
                 <path
@@ -76,11 +76,11 @@
                 />
               </svg>
             </template>
-          </InputTextField>
+          </c-text-field>
         </div>
         <div class="">
           <h3>Prepend Icon</h3>
-          <InputTextField v-model="data.text">
+          <c-text-field v-model="data.text">
             <template #prepend>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="24">
                 <path
@@ -88,11 +88,11 @@
                 />
               </svg>
             </template>
-          </InputTextField>
+          </c-text-field>
         </div>
         <div class="">
           <h3>Append Icon</h3>
-          <InputTextField v-model="data.text">
+          <c-text-field v-model="data.text">
             <template #append>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="24">
                 <path
@@ -100,23 +100,23 @@
                 />
               </svg>
             </template>
-          </InputTextField>
+          </c-text-field>
         </div>
         <div class="">
           <h3>size small</h3>
-          <InputTextField v-model="data.text" size="small" label="text" placeholder="請輸入文字"> </InputTextField>
+          <c-text-field v-model="data.text" size="small" label="text" placeholder="請輸入文字"> </c-text-field>
         </div>
         <div class="">
           <h3>size medium</h3>
-          <InputTextField v-model="data.text" size="medium" label="text" placeholder="請輸入文字"> </InputTextField>
+          <c-text-field v-model="data.text" size="medium" label="text" placeholder="請輸入文字"> </c-text-field>
         </div>
         <div class="">
           <h3>size large</h3>
-          <InputTextField v-model="data.text" size="large" label="text" placeholder="請輸入文字"> </InputTextField>
+          <c-text-field v-model="data.text" size="large" label="text" placeholder="請輸入文字"> </c-text-field>
         </div>
         <div class="">
           <h3>複製按鈕 Demo</h3>
-          <InputTextField v-model="data.text" @click:append-inner="handleCopy">
+          <c-text-field v-model="data.text" @click:append-inner="handleCopy">
             <template #append-inner>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="16">
                 <path
@@ -124,7 +124,7 @@
                 />
               </svg>
             </template>
-          </InputTextField>
+          </c-text-field>
         </div>
       </div>
       <!-- radio -->
@@ -134,24 +134,24 @@
         <div class="grid grid-cols-4 gap-4">
           <div class="">
             <h4>basic</h4>
-            <InputRadioGroup v-model="data.gender">
-              <InputRadio :value="Gender.male">男</InputRadio>
-              <InputRadio :value="Gender.female">女</InputRadio>
-            </InputRadioGroup>
+            <c-radio-group v-model="data.gender">
+              <c-radio :value="Gender.male">男</c-radio>
+              <c-radio :value="Gender.female">女</c-radio>
+            </c-radio-group>
           </div>
           <div class="">
             <h4>Disabled</h4>
-            <InputRadioGroup v-model="data.gender" disabled>
-              <InputRadio :value="Gender.male">男</InputRadio>
-              <InputRadio :value="Gender.female">女</InputRadio>
-            </InputRadioGroup>
+            <c-radio-group v-model="data.gender" disabled>
+              <c-radio :value="Gender.male">男</c-radio>
+              <c-radio :value="Gender.female">女</c-radio>
+            </c-radio-group>
           </div>
           <div class="">
             <h4>Readonly</h4>
-            <InputRadioGroup v-model="data.gender" readonly>
-              <InputRadio :value="Gender.male">男</InputRadio>
-              <InputRadio :value="Gender.female">女</InputRadio>
-            </InputRadioGroup>
+            <c-radio-group v-model="data.gender" readonly>
+              <c-radio :value="Gender.male">男</c-radio>
+              <c-radio :value="Gender.female">女</c-radio>
+            </c-radio-group>
           </div>
         </div>
         <h3>不使用RadioGroup</h3>
@@ -160,22 +160,22 @@
           <div>
             <h4>basic</h4>
             <div class="p-2 flex gap-2">
-              <InputRadio v-model="data.gender" :value="Gender.male">男</InputRadio>
-              <InputRadio v-model="data.gender" :value="Gender.female">女</InputRadio>
+              <c-radio v-model="data.gender" :value="Gender.male">男</c-radio>
+              <c-radio v-model="data.gender" :value="Gender.female">女</c-radio>
             </div>
           </div>
           <div>
             <h4>disabled</h4>
             <div class="p-2 flex gap-2">
-              <InputRadio v-model="data.gender" :value="Gender.male" disabled>男</InputRadio>
-              <InputRadio v-model="data.gender" :value="Gender.female" disabled>女</InputRadio>
+              <c-radio v-model="data.gender" :value="Gender.male" disabled>男</c-radio>
+              <c-radio v-model="data.gender" :value="Gender.female" disabled>女</c-radio>
             </div>
           </div>
           <div>
             <h4>readonly</h4>
             <div class="p-2 flex gap-2">
-              <InputRadio v-model="data.gender" :value="Gender.male" readonly>男</InputRadio>
-              <InputRadio v-model="data.gender" :value="Gender.female" readonly>女</InputRadio>
+              <c-radio v-model="data.gender" :value="Gender.male" readonly>男</c-radio>
+              <c-radio v-model="data.gender" :value="Gender.female" readonly>女</c-radio>
             </div>
           </div>
         </div>
@@ -187,27 +187,27 @@
         <div class="grid grid-cols-3 gap-4">
           <div>
             <h3>basic</h3>
-            <InputCheckboxGroup v-model="data.interests">
-              <InputCheckbox value="basketball">籃球</InputCheckbox>
-              <InputCheckbox value="badminton">羽毛球</InputCheckbox>
-              <InputCheckbox value="tabletennis">桌球</InputCheckbox>
-            </InputCheckboxGroup>
+            <c-checkbox-group v-model="data.interests">
+              <c-checkbox value="basketball">籃球</c-checkbox>
+              <c-checkbox value="badminton">羽毛球</c-checkbox>
+              <c-checkbox value="tabletennis">桌球</c-checkbox>
+            </c-checkbox-group>
           </div>
           <div>
             <h3>disabled</h3>
-            <InputCheckboxGroup v-model="data.interests" disabled>
-              <InputCheckbox value="basketball">籃球</InputCheckbox>
-              <InputCheckbox value="badminton">羽毛球</InputCheckbox>
-              <InputCheckbox value="tabletennis">桌球</InputCheckbox>
-            </InputCheckboxGroup>
+            <c-checkbox-group v-model="data.interests" disabled>
+              <c-checkbox value="basketball">籃球</c-checkbox>
+              <c-checkbox value="badminton">羽毛球</c-checkbox>
+              <c-checkbox value="tabletennis">桌球</c-checkbox>
+            </c-checkbox-group>
           </div>
           <div>
             <h3>readonly</h3>
-            <InputCheckboxGroup v-model="data.interests" readonly>
-              <InputCheckbox value="basketball">籃球</InputCheckbox>
-              <InputCheckbox value="badminton">羽毛球</InputCheckbox>
-              <InputCheckbox value="tabletennis">桌球</InputCheckbox>
-            </InputCheckboxGroup>
+            <c-checkbox-group v-model="data.interests" readonly>
+              <c-checkbox value="basketball">籃球</c-checkbox>
+              <c-checkbox value="badminton">羽毛球</c-checkbox>
+              <c-checkbox value="tabletennis">桌球</c-checkbox>
+            </c-checkbox-group>
           </div>
         </div>
         <h3>不使用CheckboxGroup</h3>
@@ -215,25 +215,25 @@
           <div>
             <h3>basic</h3>
             <div class="flex flex-col gap-2">
-              <InputCheckbox v-model="data.interests" value="basketball">籃球</InputCheckbox>
-              <InputCheckbox v-model="data.interests" value="badminton">羽毛球</InputCheckbox>
-              <InputCheckbox v-model="data.interests" value="tabletennis">桌球</InputCheckbox>
+              <c-checkbox v-model="data.interests" value="basketball">籃球</c-checkbox>
+              <c-checkbox v-model="data.interests" value="badminton">羽毛球</c-checkbox>
+              <c-checkbox v-model="data.interests" value="tabletennis">桌球</c-checkbox>
             </div>
           </div>
           <div>
             <h3>disabled</h3>
             <div class="flex flex-col gap-2">
-              <InputCheckbox v-model="data.interests" disabled value="basketball">籃球</InputCheckbox>
-              <InputCheckbox v-model="data.interests" disabled value="badminton">羽毛球</InputCheckbox>
-              <InputCheckbox v-model="data.interests" disabled value="tabletennis">桌球</InputCheckbox>
+              <c-checkbox v-model="data.interests" disabled value="basketball">籃球</c-checkbox>
+              <c-checkbox v-model="data.interests" disabled value="badminton">羽毛球</c-checkbox>
+              <c-checkbox v-model="data.interests" disabled value="tabletennis">桌球</c-checkbox>
             </div>
           </div>
           <div>
             <h3>readonly</h3>
             <div class="flex flex-col gap-2">
-              <InputCheckbox v-model="data.interests" readonly value="basketball">籃球</InputCheckbox>
-              <InputCheckbox v-model="data.interests" readonly value="badminton">羽毛球</InputCheckbox>
-              <InputCheckbox v-model="data.interests" readonly value="tabletennis">桌球</InputCheckbox>
+              <c-checkbox v-model="data.interests" readonly value="basketball">籃球</c-checkbox>
+              <c-checkbox v-model="data.interests" readonly value="badminton">羽毛球</c-checkbox>
+              <c-checkbox v-model="data.interests" readonly value="tabletennis">桌球</c-checkbox>
             </div>
           </div>
         </div>
@@ -242,7 +242,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { $message } from "@/composables/useMessage";
+import { $message } from "@/composable/useMessage";
 
 enum Gender {
   male = 0,
