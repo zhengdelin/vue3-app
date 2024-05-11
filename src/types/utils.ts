@@ -6,6 +6,8 @@ declare global {
   type MaybePromise<T> = T | Promise<T>;
   type MaybeRef<T> = T | Ref<T>;
   type NotNullObject<T> = NonNullable<T> extends object ? NonNullable<T> : never;
+
+  type RecursiveRequired<T> = T extends object ? { [P in keyof T]-?: RecursiveRequired<T[P]> } : T;
 }
 
 export {};

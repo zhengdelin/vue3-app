@@ -2,7 +2,7 @@ import { App } from "vue";
 import directive from "./directive";
 import Loading from "./components/Loading.vue";
 
-export function useLoading(loadingWhenPageStart = false) {
+export function useLoading(_loadingWhenPageStart = false) {
   const loading = ref(false);
   // if (loadingWhenPageStart) {
   //   const nuxtApp = useNuxtApp();

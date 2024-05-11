@@ -12,18 +12,25 @@ import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 const UnpluginAutoImport = [
   AutoImport({
+    // 要匯入的module
     imports: ["vue", "vue-router"],
+    //產生的檔案位置
     dts: resolve(__dirname, "./src/auto-imports.d.ts"),
   }),
 
   Components({
-    // 從 `./src/components/` 路徑查找
     extensions: ["vue"],
+    // 包含什麼檔案
     include: [/\.vue$/, /\.vue\?vue/],
+    // 產生的檔案的位置
     dts: resolve(__dirname, "./src/components.d.ts"),
-    dirs: [resolve(__dirname, "src/components"), resolve(__dirname, "src/ui")],
+    // 從 `./src/components/` `./src/ui` 路徑查找
+    dirs: [resolve(__dirname, "./src/components"), resolve(__dirname, "./src/ui")],
+    // 資料夾名稱將會作為檔名
     directoryAsNamespace: true,
+    // 當檔名的prefix與資料夾相同的話將會被合併
     collapseSamePrefixes: true,
+    // 處理特定的component
     resolvers: [],
   }),
 ];

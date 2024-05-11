@@ -4,7 +4,7 @@ import { generateRoutes } from "vite-plugin-routes-generator";
 
 export const routes = generateRoutes({
   components: import.meta.glob(`../views/**\/*.vue`),
-  routeConfigs: import.meta.glob(`../views/**\/*.vue`, {
+  routeConfigs: import.meta.glob(`../views/**\/*.ts`, {
     eager: true, //轉成模塊
     import: "default", //取出模塊的default
   }),

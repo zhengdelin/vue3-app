@@ -179,3 +179,17 @@ export function mergeObject(obj: any, sources: any, options: MergeOptions = {}):
   }
   return obj;
 }
+
+export function flatTree<T>(tree: T[], getChildren = (item: T) => (item as any).children as T[] | undefined): T[] {
+  return [
+    ...new Set(
+      tree.reduce(
+        (acc, item) => {
+          const children = getChildren(item);
+          return acc.concat(children ? flatTree(children) : item);
+        },
+        [...tree],
+      ),
+    ),
+  ];
+}

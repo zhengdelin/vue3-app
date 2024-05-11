@@ -64,7 +64,6 @@ const props = withDefaults(
   {
     ...INPUT_CONTROL_PROPS_DEFAULT,
     ...INPUT_CONTAINER_PROPS_DEFAULT,
-    type: "text",
     placeholder: "",
     autoFocus: false,
     trigger: "input",
@@ -74,7 +73,6 @@ const props = withDefaults(
       delay: 300,
     }),
     inputProps: undefined,
-    clearable: false,
   },
 );
 
@@ -114,7 +112,6 @@ const inputProps = computed(() => {
   const propsClass = _props?.class ? (Array.isArray(_props?.class) ? _props?.class.join(" ") : _props?.class) : "";
   const p = {
     placeholder: props.placeholder,
-    type: props.type,
     ..._props,
     class: ["input--field-input", propsClass],
     readonly: readonly.value,

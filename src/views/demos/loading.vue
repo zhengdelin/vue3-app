@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { useLoading } from "@/composable/useLoading";
 
-const { loading, execute } = useLoading();
+const { loading } = useLoading();
 
 function toggleLoading() {
   loading.value = !loading.value;

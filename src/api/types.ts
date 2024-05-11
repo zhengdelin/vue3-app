@@ -1,11 +1,4 @@
-import {
-  AxiosError,
-  AxiosInstance,
-  AxiosInterceptorManager,
-  AxiosRequestConfig,
-  CancelTokenSource,
-  Method,
-} from "axios";
+import { AxiosError, AxiosRequestConfig } from "axios";
 
 export {};
 

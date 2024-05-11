@@ -1,4 +1,4 @@
 import { $query } from "..";
 export default {
-  getPermissions: () => $query.get<any[]>("/global/permissions"),
+  getPermissions: () => $query.get("/global/permissions"),
 } as const;

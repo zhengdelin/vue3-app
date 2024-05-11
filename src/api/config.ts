@@ -1,6 +1,5 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, CanceledError } from "axios";
 import { $message } from "@/composable/useMessage";
-import { useStore } from "@/store";
 import { AxiosInterceptorsConfig } from "./types";
 
 function getToastConfig({ success = {}, error = {} }: AxiosRequestConfig["toastConfig"] = { success: {}, error: {} }) {

@@ -13,7 +13,7 @@ const $axios = useAxios("/api/zh-tw", {
   },
 
   onResponseErrorShowToast(payload) {
-    const { error, config } = payload;
+    const { error } = payload;
     if (error.notify) {
       $message.error(error.message);
     }
