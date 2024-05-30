@@ -1,5 +1,5 @@
 <template>
-  <c-menu position="top" offset="-8px" :close-on-content-click="false" :max-height="310">
+  <c-menu position="bottom" offset="-8px" :close-on-content-click="false" :max-height="310">
     <template #activator="{ props: activatorProps }">
       <c-input-container
         class="select-field"
@@ -56,8 +56,8 @@ import { isSet } from "@/utils/object";
 import { INPUT_CONTAINER_PROPS_DEFAULT } from "../c-input-container/constants";
 import { InputContainerEmits, InputContainerProps } from "../c-input-container/types";
 import { createInputContainerContext } from "../c-input-container/useInputContainer";
+import InputControl from "../c-input-control/CInputControl.vue";
 import { INPUT_CONTROL_PROPS_DEFAULT } from "../c-input-control/constants";
-import InputControl from "../c-input-control/index.vue";
 import { InputControlEmits, InputControlProps } from "../c-input-control/types";
 import { createInputControlContext } from "../c-input-control/useInputControl";
 import { CanDebounceInputProps, createCanDebounceInput } from "../composable/useDebounceInput";

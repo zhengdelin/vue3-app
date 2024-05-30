@@ -18,6 +18,7 @@ withDefaults(defineProps<ListItemProps>(), {});
 </script>
 <style lang="scss">
 .c-list-item {
+  --list-item-hover-bg-color: rgba(59, 130, 246, 0.1);
   padding: 4px 16px;
   max-width: 100%;
   min-height: 48px;
@@ -29,6 +30,10 @@ withDefaults(defineProps<ListItemProps>(), {});
 
   .content {
     align-self: center;
+  }
+
+  &:hover {
+    background-color: var(--list-item-hover-bg-color);
   }
 }
 </style>

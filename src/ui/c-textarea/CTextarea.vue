@@ -1,5 +1,5 @@
 <template>
-  <c-input-container class="text-field" v-bind="{ ...inputContainerProps, ...inputContainerContext.emitEvents }">
+  <c-input-container v-bind="{ ...inputContainerProps, ...inputContainerContext.emitEvents }" class="textarea-field">
     <template v-for="(_, slotName) in inputContainerContext.slots" #[`${slotName}`]="slotProps">
       <slot :name="slotName" v-bind="slotProps"></slot>
     </template>
@@ -10,14 +10,14 @@
     >
       <template #default="slotProps">
         <slot name="input" v-bind="slotProps">
-          <input
-            :value="modelValue"
+          <textarea
+            v-model="modelValue"
             v-bind="{ readonly: slotProps.readonly, disabled: slotProps.disabled, ...inputProps }"
             @input="onInput"
             @change="onChange"
             @focus.stop="slotProps.onFocus"
             @blur.stop="slotProps.onBlur"
-          />
+          ></textarea>
           <!-- <textarea id="" name="" cols="30" rows="10"></textarea> -->
         </slot>
       </template>
@@ -27,21 +27,22 @@
     </c-input-control>
   </c-input-container>
 </template>
-<script setup lang="ts" generic="ModelValueType = any">
+<script setup lang="ts">
 import useComponentRef from "@/composable/useComponentRef";
 import { isSet } from "@/utils/object";
 import { INPUT_CONTAINER_PROPS_DEFAULT } from "../c-input-container/constants";
 import { InputContainerEmits, InputContainerProps } from "../c-input-container/types";
 import { createInputContainerContext } from "../c-input-container/useInputContainer";
+import InputControl from "../c-input-control/CInputControl.vue";
 import { INPUT_CONTROL_PROPS_DEFAULT } from "../c-input-control/constants";
-import CInputControl from "../c-input-control/index.vue";
 import { InputControlEmits, InputControlProps } from "../c-input-control/types";
 import { createInputControlContext } from "../c-input-control/useInputControl";
 import { CanDebounceInputProps, createCanDebounceInput } from "../composable/useDebounceInput";
 
-interface InputTextField {
+type ModelValueType = string;
+
+interface TextareaProps {
   modelValue?: ModelValueType;
-  type?: string;
   placeholder?: string;
   autoFocus?: boolean;
 
@@ -49,11 +50,10 @@ interface InputTextField {
 }
 
 const props = withDefaults(
-  defineProps<InputControlProps & InputContainerProps & InputTextField & CanDebounceInputProps>(),
+  defineProps<InputControlProps & InputContainerProps & TextareaProps & CanDebounceInputProps>(),
   {
     ...INPUT_CONTROL_PROPS_DEFAULT,
     ...INPUT_CONTAINER_PROPS_DEFAULT,
-    type: "text",
     placeholder: "",
     autoFocus: false,
     trigger: "input",
@@ -70,9 +70,9 @@ type InputTextFieldEmits = InputContainerEmits &
   InputControlEmits & {
     (e: "update:modelValue", value: ModelValueType): void;
   };
-
 const emit = defineEmits<InputTextFieldEmits>();
 const slots = useSlots();
+
 // 透傳
 // container
 const inputContainerContext = createInputContainerContext(props, emit, slots);
@@ -83,10 +83,9 @@ const inputControlProps = inputControlContext.props;
 inputControlContext.emitEvents["onClear"] = () => updateModelValue("");
 
 // refs
-const inputControlRef = useComponentRef(CInputControl);
-
+const inputControlRef = useComponentRef(InputControl);
 const { modelValue, onChange, onInput, updateModelValue } = createCanDebounceInput(
-  { props, emit },
+  { props, emit, propName: "modelValue" },
   {
     trigger: props.trigger,
     debounce: props.debounce,
@@ -101,7 +100,6 @@ const inputProps = computed(() => {
   const propsClass = _props?.class ? (Array.isArray(_props?.class) ? _props?.class.join(" ") : _props?.class) : "";
   const p = {
     placeholder: props.placeholder,
-    type: props.type,
     ..._props,
     class: ["input--field-input", propsClass],
   } as Record<string, any>;
@@ -119,16 +117,23 @@ defineExpose({
 </script>
 
 <style scoped lang="scss">
-.text-field {
+.textarea-field {
   // &.is-disabled {
   //   input {
   //   }
   // }
 
-  input {
+  .input--control {
+    --input-field-label-top: calc(var(--input-field-padding-top));
+  }
+
+  textarea {
     color: inherit;
     outline: none;
     border: none;
+    padding-top: calc(var(--input-field-padding-top) + 5px);
+    height: 300px;
+    // resize: none;
   }
 }
 </style>

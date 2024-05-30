@@ -1,5 +1,6 @@
 import { ComponentInternalInstance, ComponentPublicInstance } from "vue";
 import { refElement } from "../utils/helpers";
+import { makePropsDefault } from "../utils/props";
 import { Point } from "./types";
 
 export type CursorEl = Point;
@@ -18,7 +19,7 @@ export interface ActivatorProps {
   closeOnContentClick?: boolean;
 }
 
-export const ACTIVATOR_PROPS_DEFAULT = {
+export const ACTIVATOR_PROPS_DEFAULT = makePropsDefault<ActivatorProps>({
   // target: undefined,
   // activator: undefined,
   // activatorProps: undefined,
@@ -26,7 +27,7 @@ export const ACTIVATOR_PROPS_DEFAULT = {
   openOnHover: false,
   openOnFocus: undefined,
   closeOnContentClick: false,
-};
+});
 
 export function useActivator(props: ActivatorProps, { isActive }: { isActive: Ref<boolean> }) {
   const vm = getCurrentInstance();

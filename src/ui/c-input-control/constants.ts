@@ -1,6 +1,7 @@
+import { makePropsDefault } from "../utils/props";
 import { InputControlProps } from "./types";
 
-export const INPUT_CONTROL_PROPS_DEFAULT = {
+export const INPUT_CONTROL_PROPS_DEFAULT = makePropsDefault<InputControlProps>({
   label: "",
   required: false,
   clearable: true,
@@ -10,4 +11,4 @@ export const INPUT_CONTROL_PROPS_DEFAULT = {
   focus: false,
   bordered: true,
   active: false,
-} as InputControlProps;
+});

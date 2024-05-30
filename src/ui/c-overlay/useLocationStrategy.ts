@@ -2,6 +2,7 @@ import useToggleScope from "@/composable/useToggleScope";
 import { getTargetBox } from "../utils/box";
 import { convertToUnit } from "../utils/helpers";
 import isFixedPosition from "../utils/isFixedPosition";
+import { makePropsDefault } from "../utils/props";
 import { Point } from "./types";
 import { CursorEl } from "./useActivator";
 
@@ -17,11 +18,11 @@ export interface LocationStrategyProps {
   maxHeight?: number | string;
 }
 
-export const LOCATION_STRATEGY_PROPS_DEFAULT: Optionals<LocationStrategyProps> = {
+export const LOCATION_STRATEGY_PROPS_DEFAULT = makePropsDefault<LocationStrategyProps>({
   position: "center",
   alignment: "center",
   offset: 0,
-};
+});
 
 interface LocationStrategyData {
   isActive: Ref<boolean>;
@@ -112,7 +113,7 @@ function connectedLocationStrategy(
 
     // position
     const posMap = _getPositionMap();
-    const [x, y] = posMap[position][alignment]();
+    let [x, y] = posMap[position][alignment]();
 
     x += document.documentElement.scrollLeft;
     y += document.documentElement.scrollTop;

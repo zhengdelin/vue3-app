@@ -32,37 +32,15 @@
 <script setup lang="ts">
 import { useVModel } from "@/composable/useVModel";
 import { VNodeRef } from "vue";
-import { LazyProps, useLazy } from "../composable/useLazy";
-import { ACTIVATOR_PROPS_DEFAULT, ActivatorProps, useActivator } from "./useActivator";
-import { LOCATION_STRATEGY_PROPS_DEFAULT, LocationStrategyProps, useLocationStrategy } from "./useLocationStrategy";
-interface OverlayProps extends ActivatorProps, LocationStrategyProps, LazyProps {
-  modelValue?: boolean;
-  scrim?: boolean | string;
-  teleport?: string;
-  absolute?: boolean;
-
-  /**
-   * 持久化
-   * 為 true 時 click outside 時將不會關閉
-   */
-  persistent?: boolean;
-
-  contentProps?: Record<string, any>;
-
-  // transition
-  transition?: string;
-}
+import { useLazy } from "../composable/useLazy";
+import { OVERLAY_PROPS_DEFAULT } from "./constants";
+import { OverlayProps } from "./types";
+import { useActivator } from "./useActivator";
+import { useLocationStrategy } from "./useLocationStrategy";
 
 const props = withDefaults(defineProps<OverlayProps>(), {
-  ...ACTIVATOR_PROPS_DEFAULT,
-  ...LOCATION_STRATEGY_PROPS_DEFAULT,
-  modelValue: false,
-  scrim: false,
-  teleport: "body",
-  transition: "fade",
+  ...OVERLAY_PROPS_DEFAULT,
 });
-
-console.log("props :>> ", props);
 
 const emit = defineEmits(["update:modelValue"]);
 
