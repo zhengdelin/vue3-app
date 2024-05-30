@@ -1,83 +1,116 @@
 <template>
   <slot
     name="activator"
-    is-active="isActive"
+    :is-active="isActive"
     :target-ref="targetRef"
     :props="{ ref: activatorRef as unknown as VNodeRef, ...activatorEvents }"
   ></slot>
-  <Teleport :to="teleportTarget">
-    <Transition name="fade" appear>
-      <div
-        v-show="isActive"
-        :class="['overlay', { 'is-absolute': absolute }]"
-        v-bind="{ ...contentEvents, ...contentProps }"
-        @click.self="onOverlayClick"
-      >
-        <div ref="contentRef" class="overlay--content">
+  <Teleport v-if="hasContent" :to="teleportTarget" :disabled="!teleportTarget">
+    <div v-bind="$attrs" :class="['overlay', { 'is-absolute': absolute }]">
+      <Transition name="fade" appear>
+        <div v-if="isScrimShow" class="overlay--scrim" :style="scrimStyles" v-bind="scrimEvents"></div>
+      </Transition>
+
+      <Transition appear :name="transition" :on-after-leave="onAfterLeave">
+        <div
+          v-show="isActive"
+          ref="contentRef"
+          v-click-outside="{ handler: onClickOutside, include: () => [activatorEl] }"
+          class="overlay--content"
+          v-bind="{ ...contentEvents, ...contentProps }"
+          :style="contentStyles"
+        >
           <slot :is-active="isActive"></slot>
         </div>
-      </div>
-    </Transition>
+      </Transition>
+    </div>
   </Teleport>
 
   <!-- <select id="" name=""></select> -->
   <!-- <div class="dropdown"></div> -->
 </template>
 <script setup lang="ts">
-import { VNodeRef } from "vue";
-import { useLocationStrategy } from "./useLocationStrategy";
-import { useActivator, ActivatorProps, ACTIVATOR_PROPS_DEFAULT } from "./useActivator";
 import { useVModel } from "@/composable/useVModel";
-import useToggleClass from "@/composable/useToggleClass";
-interface OverlayProps extends ActivatorProps {
+import { VNodeRef } from "vue";
+import { LazyProps, useLazy } from "../composable/useLazy";
+import { ACTIVATOR_PROPS_DEFAULT, ActivatorProps, useActivator } from "./useActivator";
+import { LOCATION_STRATEGY_PROPS_DEFAULT, LocationStrategyProps, useLocationStrategy } from "./useLocationStrategy";
+interface OverlayProps extends ActivatorProps, LocationStrategyProps, LazyProps {
   modelValue?: boolean;
-  bg?: string;
+  scrim?: boolean | string;
   teleport?: string;
-  closeOnClickOverlay?: boolean;
   absolute?: boolean;
 
+  /**
+   * 持久化
+   * 為 true 時 click outside 時將不會關閉
+   */
+  persistent?: boolean;
+
   contentProps?: Record<string, any>;
+
+  // transition
+  transition?: string;
 }
+
 const props = withDefaults(defineProps<OverlayProps>(), {
+  ...ACTIVATOR_PROPS_DEFAULT,
+  ...LOCATION_STRATEGY_PROPS_DEFAULT,
   modelValue: false,
-  bg: "",
+  scrim: false,
   teleport: "body",
-  ...(ACTIVATOR_PROPS_DEFAULT as any),
+  transition: "fade",
 });
+
+console.log("props :>> ", props);
+
 const emit = defineEmits(["update:modelValue"]);
 
 // refs
 const contentRef = ref<HTMLElement>();
 
 const isActive = useVModel({ props, emit, transformIn: (v) => !!v });
-useToggleClass(document.body, isActive, "overlay-lock");
-
-const teleportTarget = computed(() => props.teleport);
-const { activatorRef, activatorEl, target, targetEl, targetRef, activatorEvents, contentEvents } = useActivator(props, {
-  isActive,
-});
-useLocationStrategy(props, { target, isActive, contentEl: contentRef });
-watchEffect(() => {
-  // console.log(target.value);
-  // console.log("activatorEvents.value :>> ", activatorEvents.value);
-  // console.log("activatorRef.value :>> ", activatorRef.value);
-});
-function onOverlayClick() {
-  if (props.closeOnClickOverlay) {
-    isActive.value = false;
+const isScrimShow = computed(() => isActive.value && !!props.scrim);
+const scrimStyles = computed(() => {
+  const bgColor = props.scrim ? (typeof props.scrim === "boolean" ? "var(--overlay-scrim-color)" : props.scrim) : null;
+  const styles: Record<string, any> = {};
+  if (bgColor) {
+    styles["background-color"] = bgColor;
   }
+  return styles;
+});
+function onClickOutside() {
+  if (props.persistent) {
+    return;
+  }
+  isActive.value = false;
+}
+
+// useToggleClass(document.body, isActive, "overlay-lock");
+const teleportTarget = computed(() => props.teleport);
+const { onAfterLeave: _onAfterLeave, hasContent } = useLazy(props, isActive);
+const { activatorRef, activatorEl, target, targetRef, activatorEvents, contentEvents, scrimEvents } = useActivator(
+  props,
+  {
+    isActive,
+  },
+);
+const { contentStyles } = useLocationStrategy(props, { target, isActive, contentEl: contentRef });
+
+function onAfterLeave() {
+  _onAfterLeave();
 }
 </script>
 <style lang="scss">
 .overlay {
+  --overlay-scrim-color: rgba(0, 0, 0, 0.25);
+  pointer-events: none;
   position: fixed;
   top: 0;
   left: 0;
-  background-color: v-bind("bg");
+  right: 0;
+  bottom: 0;
   z-index: 2000;
-  height: var(--100vh, 100vh);
-  width: 100%;
-  overflow: auto;
   display: flex;
   &.is-absolute {
     position: absolute;
@@ -86,6 +119,20 @@ function onOverlayClick() {
   .overlay--content {
     outline: none;
     position: absolute;
+    pointer-events: auto;
+  }
+
+  .overlay--scrim {
+    pointer-events: auto;
+    border-radius: inherit;
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+  }
+
+  .open-on-hover {
   }
 }
 .overlay-lock {

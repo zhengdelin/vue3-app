@@ -1,12 +1,13 @@
-import { createApp } from "vue";
 import "@/assets/styles/app.scss";
-import App from "./App.vue";
-import { installPinia } from "./store";
 import { setupDebounceThrottleDirectives } from "@/composable/useDebounceThrottle";
-import { installRouter } from "./router";
 import "@/plugins/prototypes/index";
-import { setupLoading } from "./composable/useLoading";
+import { createApp } from "vue";
+import App from "./App.vue";
+import useClickOutside from "./composable/useClickoutside";
 import { installVueI18n } from "./composable/useI18n";
+import { setupLoading } from "./composable/useLoading";
+import { installRouter } from "./router";
+import { installPinia } from "./store";
 // import useValidationForm from "./composable/useValidationForm";
 const app = createApp(App);
 
@@ -20,4 +21,5 @@ installVueI18n(app);
 //   radioGroup: defineAsyncComponent(() => import("@/components/input/RadioGroup.vue")),
 //   radio: defineAsyncComponent(() => import("@/components/input/Radio.vue")),
 // });
+app.use(useClickOutside);
 app.mount("#app");

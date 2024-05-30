@@ -1,7 +1,8 @@
-import { refElement } from "@/utils/ref";
 import { ComponentInternalInstance, ComponentPublicInstance } from "vue";
+import { refElement } from "../utils/helpers";
+import { Point } from "./types";
 
-export type CursorEl = [x: number, y: number];
+export type CursorEl = Point;
 // eslint-disable-next-line @typescript-eslint/ban-types
 type ActivatorActivator = "parent" | (string & {}) | Element | undefined;
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -25,7 +26,7 @@ export const ACTIVATOR_PROPS_DEFAULT = {
   openOnHover: false,
   openOnFocus: undefined,
   closeOnContentClick: false,
-} as ActivatorProps;
+};
 
 export function useActivator(props: ActivatorProps, { isActive }: { isActive: Ref<boolean> }) {
   const vm = getCurrentInstance();
@@ -141,6 +142,23 @@ export function useActivator(props: ActivatorProps, { isActive }: { isActive: Re
     return events;
   });
 
+  const scrimEvents = computed(() => {
+    const events = {} as Record<string, EventListener>;
+
+    if (props.openOnHover) {
+      events.onMouseenter = () => {
+        isHovered = true;
+        runOpen();
+      };
+
+      events.onMouseleave = () => {
+        isHovered = false;
+        runClose();
+      };
+    }
+    return events;
+  });
+
   // 當 Overlay 隱藏時，清除 cursorTarget
   watch(
     isActive,
@@ -192,6 +210,7 @@ export function useActivator(props: ActivatorProps, { isActive }: { isActive: Re
     targetRef,
     activatorEvents,
     contentEvents,
+    scrimEvents,
   };
 }
 

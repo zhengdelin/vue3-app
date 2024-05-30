@@ -21,11 +21,7 @@
     "browser": true,
     "es2021": true
   },
-  "extends": [
-    "plugin:vue/vue3-recommended",
-    "plugin:@typescript-eslint/recommended",
-    "prettier"
-  ],
+  "extends": ["plugin:vue/vue3-recommended", "plugin:@typescript-eslint/recommended", "prettier"],
   "overrides": [],
   "parser": "vue-eslint-parser",
   "parserOptions": {
@@ -33,17 +29,13 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": [
-    "@typescript-eslint",
-    "vue",
-    "prettier"
-  ],
+  "plugins": ["@typescript-eslint", "vue", "prettier"],
   "rules": {
     "vue/multi-word-component-names": 0,
     "prettier/prettier": "error",
     "no-console": "off",
     "no-debugger": "off",
-    "no-extend-native": ["error", { "exceptions": ["Array", "String"] }],
+    "no-extend-native": ["error", { "exceptions": ["Array", "String"] }]
     // "sort-imports": "error"
   }
 }
@@ -74,7 +66,7 @@
 //     "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
 
 //     "no-extend-native": ["error", { exceptions: ["Array", "String"] }],
-    
+
 //   },
-  
+
 // };
