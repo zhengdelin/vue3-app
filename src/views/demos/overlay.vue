@@ -16,8 +16,8 @@
         :position="position"
         :alignment="alignment"
       >
-        <template #activator="{ props }">
-          <c-btn v-bind="props"> 切換 </c-btn>
+        <template #activator="{ props: activatorProps }">
+          <c-btn v-bind="activatorProps">切換</c-btn>
         </template>
 
         <div class="bg-cyan-300 rounded-5 w-20 h-10 flex justify-center items-center">內容</div>

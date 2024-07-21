@@ -14,7 +14,8 @@
       :column-alignment="alignment"
       :show-action="false"
       :show-search="false"
-    ></c-table>
+    >
+    </c-table>
     <div class="flex justify-between items-center">
       <h1 class="text-h2">搜尋</h1>
       <div class="flex gap-4">
@@ -38,7 +39,6 @@
 <script setup lang="ts">
 import type { ColumnOptions, TableColumnAlignment } from "@/ui/c-table/types";
 const alignment = ref("start" as TableColumnAlignment);
-
 const searchConfig = reactive({
   show: true,
   ignoreCase: true,

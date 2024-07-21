@@ -171,6 +171,28 @@ export default {
 }
 ```
 
+## 安裝 VueRouter
+```bash
+npm install vue-router
+```
+
+## 安裝自動生成路由
+
+## 安裝 i18n
+```bash
+npm install vue-i18n
+```
+
+## 安裝 axios
+```bash
+npm install axios
+```
+
+### 安裝 use-axios-async-data
+```bash
+npm install use-axios-async-data
+```
+
 ## 使用 Dockerfile 部署
 Build Dockerfile to Image
 ```bash

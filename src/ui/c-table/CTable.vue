@@ -58,7 +58,7 @@
                 :style="column.styles"
               >
                 <div>
-                  <slot :name="'item.' + column.key" :item="item" :value="item[column.key]">
+                  <slot :name="'item-' + column.key" :item="item" :value="item[column.key]">
                     <c-highlight-search-text
                       :text="item[column.key]"
                       :search-text="searchText"
@@ -103,12 +103,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRefs } from "vue";
+import { createPagination, usePaginatedItems, usePagination } from "@/composable/usePagination";
 import { useSearchFilter, UseSearchFilterConfig } from "@/composable/useSearchFilter";
-import { createPagination, usePagination, usePaginatedItems } from "@/composable/usePagination";
-import type { ColumnOptions, ColumnItem, TableColumnAlignment } from "./types";
 import { useVModel } from "@/composable/useVModel";
+import { computed, ref, toRefs } from "vue";
 import { provideCheckboxGroup } from "../c-checkbox-group/useCheckboxGroup";
+import type { ColumnItem, ColumnOptions, TableColumnAlignment } from "./types";
 
 interface Props {
   title?: string;
