@@ -1,5 +1,5 @@
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, CanceledError } from "axios";
 import { $message } from "@/composable/useMessage";
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, CanceledError } from "axios";
 import { AxiosInterceptorsConfig } from "./types";
 
 function getToastConfig({ success = {}, error = {} }: AxiosRequestConfig["toastConfig"] = { success: {}, error: {} }) {
@@ -78,7 +78,7 @@ export function registerAxiosInterceptors(
           // 預設錯誤訊息
           onResponseErrorShowToast?.({ error: errorResponseData, config });
         }
-        return errorResponseData;
+        throw errorResponseData;
       } else {
         console.log("error :>> ", error);
         //取消

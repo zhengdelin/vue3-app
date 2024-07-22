@@ -10,7 +10,6 @@ export const routes = generateRoutes({
     import: "default", //取出模塊的default
   }),
 });
-
 const router = createRouter({
   history: createWebHistory(),
   routes: routes as RouteRecordRaw[],
