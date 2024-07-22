@@ -67,7 +67,7 @@ export function registerAxiosInterceptors(
           console.groupEnd();
         }
 
-        onResponseError?.({ error, response: errorResponseData });
+        onResponseError?.({ error, responseData: errorResponseData });
 
         const { error: errorToastConfig } = getToastConfig(config.toastConfig);
         if (!errorToastConfig) return errorResponseData;

@@ -1,15 +1,27 @@
 <template>
   <div class="table-container">
-    <div v-if="!hideTop" class="flex flex-col gap-8" v-bind="footerProps">
-      <div v-if="title" class="flex gap-4">
-        <div class="title">{{ title }}</div>
+    <div v-if="!hideHeader" class="flex items-center" v-bind="headerProps">
+      <div v-if="title" class="title">
+        {{ title }}
       </div>
-      <div class="flex justify-between items-center">
-        <div class="flex gap-3 items-center">
-          <c-text-field v-if="showSearch" v-model="searchText" :placeholder="searchPlaceholder" debounce />
-          <slot name="extra"></slot>
-        </div>
-        <slot name="button"></slot>
+      <div class="title-extra">
+        <slot name="title-extra">
+          <slot
+            name="search"
+            :search-text="searchText"
+            :update-search-text="(text: string) => (searchText = text)"
+            :search-placeholder="searchPlaceholder"
+          >
+            <c-text-field
+              v-if="showSearch"
+              v-model="searchText"
+              :placeholder="searchPlaceholder"
+              debounce
+              hide-details
+            />
+          </slot>
+          <slot name="title-buttons"></slot>
+        </slot>
       </div>
     </div>
     <div class="table-wrapper">
@@ -125,8 +137,7 @@ interface Props {
 
   // show
   showIndex?: boolean;
-  showAction?: boolean;
-  hideTop?: boolean;
+  hideHeader?: boolean;
   hideFooter?: boolean;
 
   footerProps?: Record<string, any>;
@@ -142,11 +153,10 @@ interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {
   columnAlignment: "start",
-  showAction: true,
   searchText: undefined,
   searchConfig: () => ({ ignoreCase: true }),
 
-  showSearch: true,
+  showSearch: false,
   showIndex: true,
   selectable: false,
   searchPlaceholder: "搜尋...",
@@ -160,9 +170,11 @@ const props = withDefaults(defineProps<Props>(), {
   itemsPerPage: 10,
 });
 const emit = defineEmits(["update:selectedItems"]);
+const slots = useSlots();
 
 const { columns, dataSource: _dataSource } = toRefs(props);
 
+const showAction = computed(() => !!slots["action"]);
 function handleColumn(column: ColumnOptions) {
   const _alignment = column.alignment ?? props.columnAlignment;
   return {
@@ -201,9 +213,10 @@ const searchText = computed({
 });
 
 const dataSourceSearched = computed(() => {
+  const value = _dataSource.value || [];
   if (searchKeys.value.length && searchText.value) {
-    return useSearchFilter(_dataSource.value, searchText.value, searchKeys.value, props.searchConfig);
-  } else return _dataSource.value;
+    return useSearchFilter(value, searchText.value, searchKeys.value, props.searchConfig);
+  } else return value;
 });
 
 // 分頁
@@ -335,6 +348,14 @@ if (props.selectable) {
     line-height: 28px;
     font-weight: bold;
     color: #1e212c;
+    margin-right: 8px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .title-extra {
+    flex: none;
   }
 }
 </style>

@@ -10,20 +10,26 @@ export const routes = generateRoutes({
     import: "default", //取出模塊的default
   }),
 });
-const router = createRouter({
+export const router = createRouter({
   history: createWebHistory(),
   routes: routes as RouteRecordRaw[],
 });
 
 router.beforeEach((to) => {
+  const _getTitle = (title: any) => (title ? (typeof title === "string" ? title : title(to)) : "");
   const defaultTitle = envVars.globSetting.title || "vue3-app";
-  if (to.meta.title) {
-    const _title = typeof to.meta.title === "string" ? () => to.meta.title : to.meta.title;
-    const title = _title(to);
-    document.title = `${title ? title + " - " : ""}${defaultTitle}`;
-  } else {
-    document.title = defaultTitle;
+  const title = _getTitle(to.meta.title);
+  const pageTitle = _getTitle(to.meta.pageTitle);
+  to.meta.pageTitle = pageTitle;
+  if (title) {
+    document.title = title;
+    return;
   }
+  if (pageTitle) {
+    to.meta.transformedPageTitle = document.title = `${pageTitle ? pageTitle + " - " : ""}${defaultTitle}`;
+    return;
+  }
+  document.title = defaultTitle;
 });
 
 export function installRouter(app: App) {

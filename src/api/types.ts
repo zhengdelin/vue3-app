@@ -77,7 +77,7 @@ export interface AxiosInterceptorsConfig {
    * @param payload 
    * @returns 
    */
-  onResponseError?: (payload: { error: AxiosError; response: ApiErrorResponse }) => void;
+  onResponseError?: (payload: { error: AxiosError; responseData: ApiErrorResponse }) => void;
 
   /**
    * @example 

@@ -7,4 +7,5 @@ export const INPUT_CONTAINER_PROPS_DEFAULT = makePropsDefault<InputContainerProp
   errorMessage: "",
   height: undefined,
   width: undefined,
+  hideDetails: undefined,
 });

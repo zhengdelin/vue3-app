@@ -4,6 +4,7 @@ export interface InputContainerProps {
   errorMessage?: string;
   height?: string;
   width?: string;
+  hideDetails?: boolean;
 }
 
 export interface InputContainerEmits {

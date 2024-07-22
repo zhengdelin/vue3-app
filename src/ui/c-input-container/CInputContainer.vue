@@ -19,16 +19,16 @@
     <div v-if="isAppended" class="append" @click="onAppendClick">
       <slot name="append"></slot>
     </div>
-    <div class="error-messages">
+    <div v-if="!hideDetails" class="error-messages">
       <!-- <IconExclamationTriangleFill></IconExclamationTriangleFill> -->
       <span>{{ errorMessage }}</span>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { createInputContainerEmitEvents } from "./useInputContainer";
-import { InputContainerEmits, InputContainerProps } from "./types";
 import { INPUT_CONTAINER_PROPS_DEFAULT } from "./constants";
+import { InputContainerEmits, InputContainerProps } from "./types";
+import { createInputContainerEmitEvents } from "./useInputContainer";
 
 const props = withDefaults(defineProps<InputContainerProps>(), INPUT_CONTAINER_PROPS_DEFAULT);
 const emit = defineEmits<InputContainerEmits>();

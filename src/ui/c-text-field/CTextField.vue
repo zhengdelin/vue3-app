@@ -65,7 +65,6 @@ const props = withDefaults(
     inputProps: undefined,
   },
 );
-
 type InputTextFieldEmits = InputContainerEmits &
   InputControlEmits & {
     (e: "update:modelValue", value: ModelValueType): void;
