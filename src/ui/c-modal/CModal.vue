@@ -69,7 +69,7 @@
 <script setup lang="ts">
 // import FormContainer from "@/components/form/Container.vue";
 import { $confirm } from "@/composable/useConfirmModal";
-import { useVDeepModel, checkPropIsPassed } from "@/composable/useVModel";
+import { checkPropIsPassed, useVDeepModel } from "@/composable/useVModel";
 
 import useDefaultValue from "@/composable/useDefaultValue";
 import { useI18n } from "@/composable/useI18n";
@@ -401,7 +401,7 @@ export default {
       @apply flex-1;
     }
     &__footer {
-      @apply border-t border-v;
+      @apply border-t;
     }
   }
 

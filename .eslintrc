@@ -39,34 +39,3 @@
     // "sort-imports": "error"
   }
 }
-
-// {
-//   "env": {
-//     browser: true,
-//     es2021: true,
-//   },
-//   extends: [
-//     // "plugin:prettier/recommended",
-//     "plugin:vue/vue3-recommended",
-//     "plugin:@typescript-eslint/recommended",
-//     "prettier",
-//   ],
-//   overrides: [],
-//   parser: "vue-eslint-parser",
-//   parserOptions: {
-//     parser: "@typescript-eslint/parser",
-//     ecmaVersion: "latest",
-//     sourceType: "module",
-//   },
-//   plugins: ["@typescript-eslint", "vue", "prettier"],
-//   rules: {
-//     "vue/multi-word-component-names": 0,
-//     "prettier/prettier": "error",
-//     "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
-//     "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
-
-//     "no-extend-native": ["error", { exceptions: ["Array", "String"] }],
-
-//   },
-
-// };

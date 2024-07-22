@@ -41,14 +41,9 @@ export default {
         p2: ["14px", { lineHeight: "21px", fontWeight: 500 }],
         p3: ["12px", { lineHeight: "18px", fontWeight: 500 }],
       },
-      fontFamily: {
-        poppins: '"Poppins"',
-      },
+      fontFamily: {},
       spacing: {
         15: "3.75rem",
-      },
-      borderColor: {
-        v: "rgba(var(--v-border-color), <alpha-value>)",
       },
     },
   },

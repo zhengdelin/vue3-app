@@ -1,8 +1,9 @@
-import { createUseAxiosAsyncData } from "use-axios-async-data";
-import global from "@/api/modules/global";
 import { useAxios } from "@/api/config";
+import global from "@/api/modules/global";
 import { $message } from "@/composable/useMessage";
-const $axios = useAxios("/api/zh-tw", {
+import envVars from "@/constants/env-vars";
+import { createUseAxiosAsyncData } from "use-axios-async-data";
+const $axios = useAxios(envVars.globSetting.apiURL, {
   onRequestSuccess: (config) => {
     console.log("onRequestSuccess :>> ", config);
   },

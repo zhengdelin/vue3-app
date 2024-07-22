@@ -1,6 +1,6 @@
 import { useModal } from "./useModal";
 import { UseModalBasicProps } from "./useModal/types";
-import ConfirmModal from "@/ui/c-confirm-modal/index.vue";
+import ConfirmModal from "@/ui/c-confirm-modal/CConfirmModal.vue";
 
 export interface ConfirmModalProps extends UseModalBasicProps {
   cancelText?: string;
