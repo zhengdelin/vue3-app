@@ -1,78 +1,69 @@
 <template>
-  <c-overlay :model-value="modelValue" />
-  <Transition
-    :enter-from-class="transitionClasses.enterFrom"
-    :enter-to-class="transitionClasses.enterTo"
-    :leave-from-class="transitionClasses.leaveFrom"
-    :leave-to-class="transitionClasses.leaveTo"
-    appear
+  <c-overlay
+    v-model="modelV"
+    :class="['modal-overlay', `modal--position-${position}`, { 'is-drawer': isDrawer, 'is-full-screen': isFullScreen }]"
+    :scrim="true"
+    :persistent="true"
+    :style="{
+      '--c-modal-slide-transform': transform,
+    }"
+    :transition="transition"
+    @scrim-click="handleOnOverlayClick"
   >
-    <c-overlay
-      :class="['modal-overlay', { 'is-drawer': isDrawer, 'is-full-screen': isFullScreen }]"
-      :model-value="modelV"
-      bg="transparent"
-      @click.self="handleOnOverlayClick"
+    <component
+      :is="component"
+      v-slot="form"
+      :class="['modal', { 'scroll-body': scrollBody, 'is-drawer': isDrawer, 'is-full-screen': isFullScreen }]"
+      v-bind="$attrs"
     >
-      <component
-        :is="component"
-        v-slot="form"
-        :class="[
-          'modal',
-          `modal--position-${position}`,
-          { 'scroll-body': scrollBody, 'is-drawer': isDrawer, 'is-full-screen': isFullScreen },
-        ]"
-        v-bind="$attrs"
-      >
-        <div v-if="!hideHeader" :class="['modal__header', headerClass]">
-          <div class="wrapper">
-            <slot name="header" :close="closeModal">
-              <h4 :class="['text-h5 truncate', titleClass]">{{ title }}</h4>
-            </slot>
-            <button
-              v-if="!hideClose && !closeBtnOutside"
-              class="close-btn"
-              density="comfortable"
-              variant="text"
-              icon="mdi-close"
-              @click.stop="closeModal"
-            ></button>
-          </div>
-        </div>
-        <c-btn
-          v-if="!hideClose && closeBtnOutside"
-          :class="['close-btn', { 'is-outside': closeBtnOutside }]"
-          icon="mdi-close"
-          @click.stop="closeModal"
-        ></c-btn>
-
-        <div :class="['modal__content', contentClass]">
-          <slot :close="closeModal"></slot>
-        </div>
-
-        <div v-if="!hideFooter" :class="['modal__footer', footerClass]">
-          <slot name="footer" v-bind="footerSlotProps(!!form?.disabled)">
-            <slot name="footer-prepend" v-bind="footerSlotProps(!!form?.disabled)"></slot>
-            <c-btn v-bind="cancelBtnProps" @click="onCancel">
-              {{ cancelText }}
-            </c-btn>
-            <c-btn type="submit" :disabled="form?.disabled" v-bind="confirmBtnProps" @click="onConfirm">
-              {{ confirmText }}
-            </c-btn>
-            <slot name="footer-append" v-bind="footerSlotProps(!!form?.disabled)"></slot>
+      <div v-if="!hideHeader" :class="['modal__header', headerClass]">
+        <div class="wrapper">
+          <slot name="header" :close="closeModal">
+            <h4 :class="['text-h5 truncate', titleClass]">{{ title }}</h4>
           </slot>
+          <c-btn
+            v-if="!hideClose && !closeBtnOutside"
+            class="close-btn"
+            icon="mdi-close"
+            @click.stop="closeModal"
+          ></c-btn>
         </div>
-      </component>
-    </c-overlay>
-  </Transition>
+      </div>
+      <c-btn
+        v-if="!hideClose && closeBtnOutside"
+        :class="['close-btn', { 'is-outside': closeBtnOutside }]"
+        icon="mdi-close"
+        @click.stop="closeModal"
+      ></c-btn>
+
+      <div :class="['modal__content', contentClass]">
+        <slot :close="closeModal"></slot>
+      </div>
+
+      <div v-if="!hideFooter" :class="['modal__footer', footerClass]">
+        <slot name="footer" v-bind="footerSlotProps(!!form?.disabled)">
+          <slot name="footer-prepend" v-bind="footerSlotProps(!!form?.disabled)"></slot>
+          <c-btn v-bind="cancelBtnProps" @click="onCancel">
+            {{ cancelText }}
+          </c-btn>
+          <c-btn type="submit" :disabled="form?.disabled" v-bind="confirmBtnProps" @click="onConfirm">
+            {{ confirmText }}
+          </c-btn>
+          <slot name="footer-append" v-bind="footerSlotProps(!!form?.disabled)"></slot>
+        </slot>
+      </div>
+    </component>
+  </c-overlay>
 </template>
 
 <script setup lang="ts">
 // import FormContainer from "@/components/form/Container.vue";
 import { $confirm } from "@/composable/useConfirmModal";
-import { checkPropIsPassed, useVDeepModel } from "@/composable/useVModel";
+import { useVDeepModel } from "@/composable/useVModel";
 
 import useDefaultValue from "@/composable/useDefaultValue";
 import { useI18n } from "@/composable/useI18n";
+import { VNode } from "vue";
 
 type Position = "center" | "right" | "left" | "top" | "bottom";
 interface Modal {
@@ -117,13 +108,10 @@ interface Modal {
   fullScreen?: boolean;
 
   /**
-   * 若綁定formModel 會自動變為true
-   */
-  asForm?: boolean;
-  /**
    * 綁定在formContainer上的modalValue
    */
   formModel?: any;
+  renderModalComponent?: () => VNode;
 }
 
 const TRANSFORM_MAP: Record<Exclude<Position, "">, string> = {
@@ -150,7 +138,7 @@ const props = withDefaults(defineProps<Modal>(), {
 
   scrollBody: undefined,
   fullScreen: false,
-  asForm: undefined,
+  renderModalComponent: undefined,
 });
 
 const emit = defineEmits(["update:modelValue", "confirm", "cancel", "close"]);
@@ -161,17 +149,13 @@ const formModel = useVDeepModel({
   propName: "formModel",
   emit,
 });
-const isFormModelPassed = checkPropIsPassed({
-  props,
-  propName: "formModel",
-});
+const isFormModelPassed = computed(() => props.formModel !== undefined);
 const { refreshDefault: refreshDefaultFormModel, isValueChanged: isFormModelChanged } = useDefaultValue(formModel);
-const asForm = computed(() => props.asForm ?? isFormModelPassed.value);
 
 /**
  * 要渲染的容器
  */
-const component = computed(() => (asForm.value ? h("form") : h("div")));
+const component = computed(() => props.renderModalComponent?.() || h("div"));
 
 // modal屬性
 const scrollBody = computed(() => props.scrollBody ?? isDrawer.value);
@@ -181,22 +165,23 @@ const isDrawer = computed(() => position.value !== "center");
 const hideClose = computed(() => props.hideClose ?? (isFullScreen.value ? false : isDrawer.value));
 // modal動畫屬性
 const transform = computed(() => TRANSFORM_MAP[position.value]);
-const transitionClasses = computed(() => {
-  if (isDrawer.value || isFullScreen.value) {
-    return {
-      enterFrom: "slide-enter-from",
-      enterTo: "slide-enter-to",
-      leaveFrom: "slide-leave-from",
-      leaveTo: "slide-leave-to",
-    };
-  }
-  return {
-    enterFrom: "modal-enter-from",
-    enterTo: "modal-enter-to",
-    leaveFrom: "modal-leave-from",
-    leaveTo: "modal-leave-to",
-  };
-});
+const transition = computed(() => (isDrawer.value || isFullScreen.value ? "c-modal-slide" : "c-modal"));
+// const transitionClasses = computed(() => {
+//   if (isDrawer.value || isFullScreen.value) {
+//     return {
+//       enterFrom: "slide-enter-from",
+//       enterTo: "slide-enter-to",
+//       leaveFrom: "slide-leave-from",
+//       leaveTo: "slide-leave-to",
+//     };
+//   }
+//   return {
+//     enterFrom: "modal-enter-from",
+//     enterTo: "modal-enter-to",
+//     leaveFrom: "modal-leave-from",
+//     leaveTo: "modal-leave-to",
+//   };
+// });
 
 // modal顯示
 const modelV = computed({
@@ -305,6 +290,49 @@ export default {
   &.is-full-screen {
     padding: 0;
   }
+
+  .overlay--content {
+    display: flex;
+  }
+}
+
+.modal--position-left .overlay--content {
+  margin-right: auto;
+}
+.modal--position-right .overlay--content {
+  margin-left: auto;
+}
+.modal--position-left,
+.modal--position-right {
+  .modal {
+    width: 450px;
+  }
+}
+
+.modal--position-bottom,
+.modal--position-top {
+  .modal {
+    height: 450px;
+    max-width: 100%;
+  }
+}
+.modal--position-bottom {
+  .overlay--content {
+    margin-top: auto;
+  }
+}
+
+.modal--position-top {
+  .overlay--content {
+    margin-bottom: auto;
+  }
+}
+
+.modal--position-center {
+  // 利用margin平均分配上下左右剩餘空間
+  .overlay--content {
+    margin: auto;
+  }
 }
 
 .modal {
@@ -316,35 +344,6 @@ export default {
   padding-top: var(--padding-top);
   padding-bottom: var(--padding-bottom);
   background-color: rgb(255, 255, 255);
-
-  &--position-left {
-    margin-right: auto;
-  }
-  &--position-right {
-    margin-left: auto;
-  }
-  &--position-left,
-  &--position-right {
-    width: 450px;
-  }
-
-  &--position-bottom,
-  &--position-top {
-    height: 450px;
-    max-width: 100%;
-  }
-  &--position-bottom {
-    margin-top: auto;
-  }
-
-  &--position-top {
-    margin-bottom: auto;
-  }
-
-  &--position-center {
-    // 利用margin平均分配上下左右剩餘空間
-    margin: auto;
-  }
 
   &__footer,
   &__header,
@@ -415,31 +414,33 @@ export default {
   }
 }
 </style>
-<style lang="scss" scoped>
-.v-enter-active {
+<style lang="scss">
+.c-modal-enter-active,
+.c-modal-slide-enter-active {
   transition: all 0.35s ease-out;
 }
-.v-leave-active {
+.c-modal-leave-active,
+.c-modal-slide-leave-active {
   transition: all 0.2s linear;
 }
 
-.modal-enter-from,
-.modal-leave-to {
+.c-modal-enter-from,
+.c-modal-leave-to {
   opacity: 0;
   transform: translateY(3%);
 }
-.modal-enter-to,
-.modal-leave-from {
+.c-modal-enter-to,
+.c-modal-leave-from {
   opacity: 1;
   transform: translateY(0);
 }
 
-.slide-enter-from,
-.slide-leave-to {
-  transform: v-bind("transform");
+.c-modal-slide-enter-from,
+.c-modal-slide-leave-to {
+  transform: var(--c-modal-slide-transform);
 }
-.slide-enter-to,
-.slide-leave-from {
+.c-modal-slide-enter-to,
+.c-modal-slide-leave-from {
   transform: translateX(0) translateY(0);
 }
 </style>

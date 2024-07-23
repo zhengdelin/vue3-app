@@ -1,25 +1,12 @@
 <template>
-  <slot
-    name="activator"
-    :is-active="isActive"
-    :target-ref="targetRef"
-    :props="{ ref: activatorRef as unknown as VNodeRef, ...activatorEvents }"
-  ></slot>
   <Teleport v-if="hasContent" :to="teleportTarget" :disabled="!teleportTarget">
     <div v-bind="$attrs" :class="['overlay', { 'is-absolute': absolute }]">
       <Transition name="fade" appear>
-        <div v-if="isScrimShow" class="overlay--scrim" :style="scrimStyles" v-bind="scrimEvents"></div>
+        <div v-show="isScrimShow" class="overlay--scrim" :style="scrimStyles" @click.self="onScrimSelfClick"></div>
       </Transition>
 
       <Transition appear :name="transition" :on-after-leave="onAfterLeave">
-        <div
-          v-show="isActive"
-          ref="contentRef"
-          v-click-outside="{ handler: onClickOutside, include: () => [activatorEl] }"
-          class="overlay--content"
-          v-bind="{ ...contentEvents, ...contentProps }"
-          :style="contentStyles"
-        >
+        <div v-show="isActive" ref="contentRef" class="overlay--content" v-bind="{ ...contentProps }">
           <slot :is-active="isActive"></slot>
         </div>
       </Transition>
@@ -31,24 +18,21 @@
 </template>
 <script setup lang="ts">
 import { useVModel } from "@/composable/useVModel";
-import { VNodeRef } from "vue";
 import { useLazy } from "../composable/useLazy";
 import { OVERLAY_PROPS_DEFAULT } from "./constants";
 import { OverlayProps } from "./types";
-import { useActivator } from "./useActivator";
-import { useLocationStrategy } from "./useLocationStrategy";
 
 const props = withDefaults(defineProps<OverlayProps>(), {
   ...OVERLAY_PROPS_DEFAULT,
 });
 
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(["update:modelValue", "scrimClick"]);
 
 // refs
 const contentRef = ref<HTMLElement>();
 
 const isActive = useVModel({ props, emit, transformIn: (v) => !!v });
-const isScrimShow = computed(() => isActive.value && !!props.scrim);
+const isScrimShow = computed(() => !!props.scrim && isActive.value);
 const scrimStyles = computed(() => {
   const bgColor = props.scrim ? (typeof props.scrim === "boolean" ? "var(--overlay-scrim-color)" : props.scrim) : null;
   const styles: Record<string, any> = {};
@@ -57,26 +41,28 @@ const scrimStyles = computed(() => {
   }
   return styles;
 });
-function onClickOutside() {
-  if (props.persistent) {
-    return;
-  }
-  isActive.value = false;
-}
+// function onClickOutside() {
+//   console.log("onClickoutside");
+//   if (props.persistent) {
+//     return;
+//   }
+//   isActive.value = false;
+// }
 
 // useToggleClass(document.body, isActive, "overlay-lock");
 const teleportTarget = computed(() => props.teleport);
 const { onAfterLeave: _onAfterLeave, hasContent } = useLazy(props, isActive);
-const { activatorRef, activatorEl, target, targetRef, activatorEvents, contentEvents, scrimEvents } = useActivator(
-  props,
-  {
-    isActive,
-  },
-);
-const { contentStyles } = useLocationStrategy(props, { target, isActive, contentEl: contentRef });
 
 function onAfterLeave() {
   _onAfterLeave();
+}
+
+function onScrimSelfClick() {
+  emit("scrimClick");
+  if (props.persistent) {
+    return;
+  }
+  isActive.value = false;
 }
 </script>
 <style lang="scss">
@@ -94,12 +80,6 @@ function onAfterLeave() {
     position: absolute;
   }
 
-  .overlay--content {
-    outline: none;
-    position: absolute;
-    pointer-events: auto;
-  }
-
   .overlay--scrim {
     pointer-events: auto;
     border-radius: inherit;
@@ -108,6 +88,11 @@ function onAfterLeave() {
     position: fixed;
     right: 0;
     top: 0;
+  }
+
+  .overlay--content {
+    position: relative;
+    pointer-events: auto;
   }
 
   .open-on-hover {

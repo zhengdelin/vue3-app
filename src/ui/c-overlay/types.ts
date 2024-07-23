@@ -1,10 +1,8 @@
 import { LazyProps } from "../composable/useLazy";
-import { ActivatorProps } from "./useActivator";
-import { LocationStrategyProps } from "./useLocationStrategy";
 
 export type Point = [x: number, y: number];
 
-export interface OverlayProps extends ActivatorProps, LocationStrategyProps, LazyProps {
+export interface OverlayProps extends LazyProps {
   modelValue?: boolean;
   scrim?: boolean | string;
   teleport?: string;

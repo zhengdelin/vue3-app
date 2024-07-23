@@ -1,29 +1,26 @@
 <template>
   <div class="table-container">
-    <div v-if="!hideHeader" class="flex items-center" v-bind="headerProps">
-      <div v-if="title" class="title">
-        {{ title }}
-      </div>
-      <div class="title-extra">
-        <slot name="title-extra">
-          <slot
-            name="search"
-            :search-text="searchText"
-            :update-search-text="(text: string) => (searchText = text)"
-            :search-placeholder="searchPlaceholder"
-          >
-            <c-text-field
-              v-if="showSearch"
-              v-model="searchText"
-              :placeholder="searchPlaceholder"
-              debounce
-              hide-details
-            />
+    <slot name="header">
+      <div v-if="!hideHeader" :class="['flex items-center', headerClass]" :style="headerStyles">
+        <div v-if="title" class="title">
+          {{ title }}
+        </div>
+        <div :class="['title-extra', titleExtraClass]" :style="titleExtraStyles">
+          <slot name="title-extra" v-bind="searchTextSlotProps">
+            <slot name="search" v-bind="searchTextSlotProps">
+              <c-text-field
+                v-if="showSearch"
+                v-model="searchText"
+                :placeholder="searchPlaceholder"
+                debounce
+                hide-details
+              />
+            </slot>
+            <slot name="title-buttons"></slot>
           </slot>
-          <slot name="title-buttons"></slot>
-        </slot>
+        </div>
       </div>
-    </div>
+    </slot>
     <div class="table-wrapper">
       <table class="table" border="0">
         <thead>
@@ -33,7 +30,7 @@
               <div><c-checkbox select-all></c-checkbox></div>
             </th>
             <!-- index col -->
-            <th v-if="showIndex" class="table--th table--index">
+            <th v-if="!hideIndex" class="table--th table--index">
               <div>#</div>
             </th>
             <!-- columns -->
@@ -59,7 +56,7 @@
                 <div><c-checkbox :value="item"></c-checkbox></div>
               </td>
               <!-- index col -->
-              <td v-if="showIndex" class="table--td table--index">
+              <td v-if="!hideIndex" class="table--td table--index">
                 <div>{{ index + 1 }}</div>
               </td>
               <!-- columns -->
@@ -93,24 +90,32 @@
           </template>
           <template v-else>
             <tr class="table--row">
-              <td class="table--td" :colspan="tableColumns.length + 2">
-                <slot name="no-data">{{ noDataText }}</slot>
+              <td class="table--td table--align-center" :colspan="tableColumns.length + 2">
+                <slot name="no-data">
+                  {{ noDataText }}
+                </slot>
               </td>
             </tr>
           </template>
         </tbody>
       </table>
     </div>
-    <div v-if="!hideFooter" class="bg-white flex gap-2 justify-between items-center" v-bind="footerProps">
-      <div>目前顯示{{ startIndex + 1 }}-{{ stopIndex }}條，共{{ pageCount }}頁</div>
-      <div class="flex gap-1 items-center">
-        <template v-for="i in pageCount" :key="i">
-          <div :class="['change-page-btn', { 'is-active': i === page }]" @click="setPage(i)">
-            {{ i }}
-          </div>
-        </template>
+    <slot name="footer" :start-index="startIndex" :stop-index="stopIndex" :page-count="pageCount" :set-page="setPage">
+      <div
+        v-if="!hideFooter"
+        :class="['bg-white flex gap-2 justify-between items-center', footerClass]"
+        :style="footerStyles"
+      >
+        <div>目前顯示{{ startIndex + 1 }}-{{ stopIndex }}條，共{{ pageCount }}頁</div>
+        <div class="flex gap-1 items-center">
+          <template v-for="i in pageCount" :key="i">
+            <div :class="['change-page-btn', { 'is-active': i === page }]" @click="setPage(i)">
+              {{ i }}
+            </div>
+          </template>
+        </div>
       </div>
-    </div>
+    </slot>
   </div>
 </template>
 
@@ -123,11 +128,16 @@ import { provideCheckboxGroup } from "../c-checkbox-group/useCheckboxGroup";
 import type { ColumnItem, ColumnOptions, TableColumnAlignment } from "./types";
 
 interface Props {
-  title?: string;
+  // data
   dataSource: any[];
   columns: ColumnItem[];
   columnAlignment?: TableColumnAlignment;
   contentDefaultText?: string;
+
+  // title
+  title?: string;
+  titleExtraClass?: string;
+  titleExtraStyles?: Record<string, any>;
 
   // search
   showSearch?: boolean;
@@ -136,12 +146,14 @@ interface Props {
   searchConfig?: UseSearchFilterConfig;
 
   // show
-  showIndex?: boolean;
+  hideIndex?: boolean;
   hideHeader?: boolean;
   hideFooter?: boolean;
 
-  footerProps?: Record<string, any>;
-  headerProps?: Record<string, any>;
+  headerClass?: string;
+  headerStyles?: Record<string, any>;
+  footerStyles?: Record<string, any>;
+  footerClass?: string;
 
   itemsPerPage?: number;
 
@@ -152,22 +164,38 @@ interface Props {
   selectedItems?: any[];
 }
 const props = withDefaults(defineProps<Props>(), {
+  // data
   columnAlignment: "start",
+  contentDefaultText: "-",
+
+  // title
+  title: "",
+  titleExtraClass: "",
+  titleExtraStyles: undefined,
+
+  // search
+  showSearch: false,
   searchText: undefined,
+  searchPlaceholder: "搜尋...",
   searchConfig: () => ({ ignoreCase: true }),
 
-  showSearch: false,
-  showIndex: true,
-  selectable: false,
-  searchPlaceholder: "搜尋...",
-  contentDefaultText: "-",
-  title: "",
-  hideTop: false,
+  // show
+  hideIndex: false,
+  hideHeader: false,
   hideFooter: false,
-  footerProps: undefined,
-  headerProps: undefined,
-  noDataText: "No data",
+
+  headerClass: "",
+  headerStyles: undefined,
+  footerStyles: undefined,
+  footerClass: "",
+
   itemsPerPage: 10,
+
+  noDataText: "No data",
+
+  // select
+  selectable: false,
+  selectedItems: undefined,
 });
 const emit = defineEmits(["update:selectedItems"]);
 const slots = useSlots();
@@ -211,6 +239,11 @@ const searchText = computed({
     _searchText.value = v;
   },
 });
+const searchTextSlotProps = computed(() => ({
+  searchText: searchText.value,
+  updateSearchText: (text: string) => (searchText.value = text),
+  searchPlaceholder: props.searchPlaceholder,
+}));
 
 const dataSourceSearched = computed(() => {
   const value = _dataSource.value || [];
@@ -355,7 +388,10 @@ if (props.selectable) {
   }
 
   .title-extra {
-    flex: none;
+    flex-grow: 1;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
   }
 }
 </style>

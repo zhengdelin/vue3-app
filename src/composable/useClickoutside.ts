@@ -9,8 +9,15 @@ type ClickOutsideBinding =
 
 function useClickOutside(el: HTMLElement, binding: ClickOutsideBinding) {
   const _handler = typeof binding === "function" ? binding : binding.handler;
-  const include = typeof binding === "function" ? () => [] : binding.include;
+  const include = typeof binding === "function" ? () => [] : binding.include || (() => []);
   const handler = (e: any) => {
+    console.log(
+      "e :>> ",
+      el.contains(e.target),
+      e.defaultPrevented,
+      include?.().every((el) => !el.contains(e.target)),
+      !el.contains(e.target) && !e.defaultPrevented && include().every((el) => !el.contains(e.target)),
+    );
     if (!el.contains(e.target) && !e.defaultPrevented && include().every((el) => !el.contains(e.target))) {
       _handler(e);
     }
