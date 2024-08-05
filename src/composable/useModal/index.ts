@@ -16,7 +16,7 @@ export function useModal<T = UseModalBasicProps>(params: UseModal<T>) {
 
   return {
     modal,
-    show: () => modal.showModal(),
+    show: (props?: any) => modal.showModal(props),
     close: () => modal.closeModal(),
     destroy: () => modal.destroyModal(),
   };

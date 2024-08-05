@@ -7,6 +7,7 @@ export interface UseModalBasicProps {
    * @returns
    */
   onConfirm?: (close: () => void) => MaybePromise<Maybe<boolean>>;
+  [key: string]: any;
 }
 
 export type UseModalAutoCloseEvent = "onCancel";

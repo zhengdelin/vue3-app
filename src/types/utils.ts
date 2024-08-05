@@ -3,6 +3,7 @@ declare global {
   type Defined<T = any> = Exclude<T, undefined>;
   type Maybe<T> = T | undefined | null | void;
   type Nullable<T = any> = T | null;
+  type DeepNullable<T> = T extends object ? { [K in keyof T]: DeepNullable<T[K]> } : Nullable<T>;
   type MaybePromise<T> = T | Promise<T>;
   type MaybeRef<T> = T | Ref<T>;
   type NotNullObject<T> = NonNullable<T> extends object ? NonNullable<T> : never;

@@ -21,20 +21,26 @@
           <slot name="header" :close="closeModal">
             <h4 :class="['text-h5 truncate', titleClass]">{{ title }}</h4>
           </slot>
-          <c-btn
-            v-if="!hideClose && !closeBtnOutside"
-            class="close-btn"
-            icon="mdi-close"
-            @click.stop="closeModal"
-          ></c-btn>
+          <div v-if="!hideClose && !closeBtnOutside" class="close-btn" @click.stop="closeModal">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+              <path
+                d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z"
+              />
+            </svg>
+          </div>
         </div>
       </div>
-      <c-btn
+      <div
         v-if="!hideClose && closeBtnOutside"
         :class="['close-btn', { 'is-outside': closeBtnOutside }]"
-        icon="mdi-close"
         @click.stop="closeModal"
-      ></c-btn>
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+          <path
+            d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z"
+          />
+        </svg>
+      </div>
 
       <div :class="['modal__content', contentClass]">
         <slot :close="closeModal"></slot>
@@ -353,11 +359,12 @@ export default {
   }
 
   .close-btn {
+    cursor: pointer;
     position: absolute;
     width: var(--size);
     height: var(--size);
     &.is-outside {
-      --size: 40px;
+      --size: 32px;
       font-size: 28px;
       top: 0;
       right: calc(-1 * var(--size) - 1.5rem);
@@ -369,7 +376,7 @@ export default {
     @apply pb-4;
     .wrapper {
       @apply relative;
-      --close-btn-size: 32px;
+      --close-btn-size: 20px;
       padding-right: var(--close-btn-size);
       .close-btn {
         --size: var(--close-btn-size);
@@ -405,8 +412,8 @@ export default {
   }
 
   &.is-full-screen {
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: var(--100vh, 100vh);
   }
 
   &.scroll-body {

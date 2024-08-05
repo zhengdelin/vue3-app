@@ -253,13 +253,12 @@ const dataSourceSearched = computed(() => {
 });
 
 // 分頁
-const { page, itemsPerPage, itemsLength } = createPagination({
-  itemsLength: dataSourceSearched.value.length,
+const { page, itemsPerPage } = createPagination({
   ...props,
 });
 const { startIndex, stopIndex, setPage, pageCount } = usePagination({
   page,
-  itemsLength,
+  itemsLength: computed(() => dataSourceSearched.value.length),
   itemsPerPage,
 });
 const { paginatedItems: paginatedData } = usePaginatedItems({
