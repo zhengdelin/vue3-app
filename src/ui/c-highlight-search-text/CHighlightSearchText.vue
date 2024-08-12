@@ -4,7 +4,7 @@
 <script setup lang="ts">
 const props = withDefaults(
   defineProps<{
-    text: string | number;
+    text: Maybe<string | number>;
     searchText: string;
     defaultText?: string;
     disabled?: boolean;
@@ -17,10 +17,17 @@ const props = withDefaults(
   },
 );
 
+const textOrDefault = (text: Maybe<string | number>) => {
+  if (typeof text === "number") {
+    return text;
+  }
+  return text || props.defaultText;
+};
+
 const html = computed(() => {
   const { searchText: _searchText, text } = props;
   if (!_searchText || props.disabled) {
-    return text || props.defaultText;
+    return textOrDefault(text);
   }
 
   const _searchTextArr = typeof _searchText === "string" ? [_searchText] : _searchText;
@@ -36,7 +43,7 @@ const html = computed(() => {
   const reg = new RegExp(`(${searchTextArr.join("|")})`, regExpFlag);
 
   // console.log("text, reg :>> ", text, reg);
-  return String(text).replace(reg, `<mark>$1</mark>`) || props.defaultText;
+  return textOrDefault(String(text).replace(reg, `<mark>$1</mark>`));
 });
 </script>
 <style scoped></style>

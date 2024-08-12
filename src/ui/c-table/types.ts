@@ -1,7 +1,9 @@
+import { VNodeChild } from "vue";
+
 export type TableColumnAlignment = "start" | "end" | "center";
-export interface ColumnOptions<T = any> {
-  key: keyof T & string;
-  label: string;
+export interface ColumnOption<T = any> {
+  key: string;
+  label?: string;
   /**
    * 是否可搜索
    * @default false
@@ -28,5 +30,7 @@ export interface ColumnOptions<T = any> {
    * @default false
    */
   sort?: boolean;
+
+  render?: (data: { rowData: T; rowIndex: number; value: any }) => VNodeChild;
 }
-export type ColumnItem<T = any> = ColumnOptions<T> | keyof T;
+export type ColumnOptions<T = any> = ColumnOption<T>[];

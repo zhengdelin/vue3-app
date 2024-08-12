@@ -91,11 +91,138 @@ export function usePaginatedItems<T>(options: {
   stopIndex: Ref<number>;
 }) {
   const { items, itemsPerPage, startIndex, stopIndex } = options;
-
   const paginatedItems = computed(() => {
     if (itemsPerPage.value <= 0) return items.value;
     return items.value.slice(startIndex.value, stopIndex.value);
   });
 
   return { paginatedItems };
+}
+
+type PaginationShowStrategyItem =
+  | {
+      value: number;
+      display: "number";
+    }
+  | {
+      value: typeof ELLIPSIS;
+      display: "ellipsis";
+    };
+interface PaginationShowStrategy {
+  totalShowCount: number;
+  showStart?: boolean;
+  showLast?: boolean;
+}
+const ELLIPSIS = "...";
+export function usePaginationShowStrategy(options: {
+  page: Ref<number>;
+  pageCount: Ref<number>;
+  strategy?: Ref<PaginationShowStrategy>;
+}) {
+  const { page, pageCount, strategy = ref({ totalShowCount: 5, showStart: true, showLast: true }) } = options;
+  strategy.value.showLast ??= true;
+  strategy.value.showStart ??= true;
+
+  const strategyShowCount = computed(() => {
+    const { totalShowCount } = strategy.value;
+    const half = Math.floor(totalShowCount / 2);
+    const showCount =
+      totalShowCount % 2 === 0
+        ? {
+            before: half - 1,
+            after: half,
+          }
+        : {
+            before: half,
+            after: half,
+          };
+
+    if (page.value <= showCount.before) {
+      const offset = showCount.before - page.value + 1;
+
+      showCount.before -= offset;
+      showCount.after += offset;
+    } else if (page.value + showCount.after > pageCount.value) {
+      const offset = page.value + showCount.after - pageCount.value;
+      showCount.after -= offset;
+      showCount.before += offset;
+    }
+
+    console.log("showCount :>> ", showCount);
+    return showCount;
+  });
+
+  const showItemsBeforeCurPage = computed(() => {
+    if (pageCount.value < 2 || page.value === 1) return [];
+    const shows = [] as PaginationShowStrategyItem[];
+
+    if (strategy.value.showStart) {
+      shows.push({
+        value: 1,
+        display: "number",
+      });
+    }
+
+    const firstIndex = Math.max(page.value - strategyShowCount.value.before, 2);
+    const lastIndex = page.value - 1;
+
+    if (firstIndex > 2) {
+      shows.push({
+        value: ELLIPSIS,
+        display: "ellipsis",
+      });
+    }
+
+    for (let i = firstIndex; i <= lastIndex; i++) {
+      shows.push({
+        value: i,
+        display: "number",
+      });
+    }
+
+    return shows;
+  });
+  const showItemsAfterCurPage = computed(() => {
+    if (pageCount.value < 2 || page.value === pageCount.value) return [];
+
+    const shows = [] as PaginationShowStrategyItem[];
+
+    let alreadyAddIdx = 0;
+    for (let i = 0; i < strategyShowCount.value.after; i++) {
+      alreadyAddIdx = i + page.value + 1;
+      shows.push({
+        value: alreadyAddIdx,
+        display: "number",
+      });
+      if (alreadyAddIdx >= pageCount.value) return shows;
+    }
+
+    // page總數與當前已添加節點的idx的距離超過1
+    if (pageCount.value - alreadyAddIdx > 1) {
+      shows.push({
+        value: ELLIPSIS,
+        display: "ellipsis",
+      });
+    }
+
+    if (strategy.value.showLast) {
+      shows.push({
+        value: pageCount.value,
+        display: "number",
+      });
+    }
+
+    return shows;
+  });
+  const paginationShowItems = computed(() => {
+    console.log("showItemsBeforeCurPage.value :>> ", showItemsBeforeCurPage.value);
+    console.log("showItemsAfterCurPage.value :>> ", showItemsAfterCurPage.value);
+    return [
+      ...showItemsBeforeCurPage.value,
+      { value: page.value, display: "number" } as PaginationShowStrategyItem,
+      ...showItemsAfterCurPage.value,
+    ];
+  });
+
+  return { paginationShowItems };
 }

@@ -44,7 +44,7 @@ const searchConfig = reactive({
   ignoreCase: true,
 });
 
-const columns: ColumnOptions[] = [
+const columns: ColumnOptions = [
   {
     key: "id",
     label: "ID",

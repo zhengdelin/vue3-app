@@ -13,7 +13,7 @@
     <component
       :is="component"
       v-slot="form"
-      :class="['modal', { 'scroll-body': scrollBody, 'is-drawer': isDrawer, 'is-full-screen': isFullScreen }]"
+      :class="['modal', { 'scroll-content': scrollContent, 'is-drawer': isDrawer, 'is-full-screen': isFullScreen }]"
       v-bind="$attrs"
     >
       <div v-if="!hideHeader" :class="['modal__header', headerClass]">
@@ -109,7 +109,7 @@ interface Modal {
   /**
    * 若為drawer 會自動為true
    */
-  scrollBody?: boolean;
+  scrollContent?: boolean;
   position?: Position;
   fullScreen?: boolean;
 
@@ -142,7 +142,7 @@ const props = withDefaults(defineProps<Modal>(), {
   modelValue: true,
   position: "center",
 
-  scrollBody: undefined,
+  scrollContent: undefined,
   fullScreen: false,
   renderModalComponent: undefined,
 });
@@ -164,7 +164,7 @@ const { refreshDefault: refreshDefaultFormModel, isValueChanged: isFormModelChan
 const component = computed(() => props.renderModalComponent?.() || h("div"));
 
 // modal屬性
-const scrollBody = computed(() => props.scrollBody ?? isDrawer.value);
+const scrollContent = computed(() => props.scrollContent ?? isDrawer.value);
 const isFullScreen = computed(() => props.fullScreen);
 const position = computed(() => (isFullScreen.value ? "bottom" : props.position));
 const isDrawer = computed(() => position.value !== "center");
@@ -291,7 +291,8 @@ export default {
 </script>
 <style lang="scss">
 .modal-overlay {
-  padding: 5vh 1rem;
+  --modal-overlay-padding-y: calc(var(--vh, 1vh) * 5);
+  padding: var(--modal-overlay-padding-y) 1rem;
   &.is-drawer,
   &.is-full-screen {
     padding: 0;
@@ -350,13 +351,7 @@ export default {
   padding-top: var(--padding-top);
   padding-bottom: var(--padding-bottom);
   background-color: rgb(255, 255, 255);
-
-  &__footer,
-  &__header,
-  &__content {
-    padding-left: var(--padding-left);
-    padding-right: var(--padding-right);
-  }
+  overflow: auto;
 
   .close-btn {
     cursor: pointer;
@@ -372,7 +367,14 @@ export default {
     }
   }
 
-  &__header {
+  .modal__footer,
+  .modal__header,
+  .modal__content {
+    padding-left: var(--padding-left);
+    padding-right: var(--padding-right);
+  }
+
+  .modal__header {
     @apply pb-4;
     .wrapper {
       @apply relative;
@@ -389,11 +391,11 @@ export default {
     }
   }
 
-  &__content {
-    @apply overflow-auto;
+  .modal__content {
+    // @apply overflow-auto;
   }
 
-  &__footer {
+  .modal__footer {
     @apply flex justify-end gap-4 pt-4;
   }
 
@@ -416,8 +418,12 @@ export default {
     height: var(--100vh, 100vh);
   }
 
-  &.scroll-body {
-    max-height: 100%;
+  &.scroll-content {
+    overflow: hidden;
+    .modal__content {
+      overflow: auto;
+    }
+    // max-height: calc(var(--100vh, 100vh) - var(--modal-overlay-padding-y) * 2);
   }
 }
 </style>

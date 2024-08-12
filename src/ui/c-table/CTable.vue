@@ -1,10 +1,12 @@
 <template>
   <div class="table-container">
-    <slot name="header">
-      <div v-if="!hideHeader" :class="['flex items-center', headerClass]" :style="headerStyles">
-        <div v-if="title" class="title">
-          {{ title }}
-        </div>
+    <div v-if="!hideHeader" :class="['flex items-center', headerClass]" :style="headerStyles">
+      <slot name="header">
+        <slot name="title">
+          <div v-if="title" class="title">
+            {{ title }}
+          </div>
+        </slot>
         <div :class="['title-extra', titleExtraClass]" :style="titleExtraStyles">
           <slot name="title-extra" v-bind="searchTextSlotProps">
             <slot name="search" v-bind="searchTextSlotProps">
@@ -19,8 +21,8 @@
             <slot name="title-buttons"></slot>
           </slot>
         </div>
-      </div>
-    </slot>
+      </slot>
+    </div>
     <div class="table-wrapper">
       <table class="table" border="0">
         <thead>
@@ -50,10 +52,10 @@
         </thead>
         <tbody>
           <template v-if="paginatedData.length">
-            <tr v-for="(item, index) in paginatedData" :key="item" class="table--row">
+            <tr v-for="(rowData, index) in paginatedData" :key="getDataKey(rowData)" class="table--row">
               <!-- select col -->
               <td v-if="selectable" class="table--td table--select">
-                <div><c-checkbox :value="item"></c-checkbox></div>
+                <div><c-checkbox :value="rowData"></c-checkbox></div>
               </td>
               <!-- index col -->
               <td v-if="!hideIndex" class="table--td table--index">
@@ -67,9 +69,25 @@
                 :style="column.styles"
               >
                 <div>
-                  <slot :name="'item-' + column.key" :item="item" :value="item[column.key]">
+                  <slot
+                    :name="'item-' + column.key"
+                    :row-data="rowData"
+                    :row-index="index"
+                    :value="getValue(rowData, column.key)"
+                  >
+                    <template v-if="typeof column.render === 'function'">
+                      <component
+                        :is="column.render"
+                        v-bind="{
+                          rowData,
+                          rowIndex: index,
+                          value: getValue(rowData, column.key),
+                        }"
+                      ></component>
+                    </template>
                     <c-highlight-search-text
-                      :text="item[column.key]"
+                      v-else
+                      :text="getValue(rowData, column.key)"
                       :search-text="searchText"
                       :default-text="contentDefaultText"
                       :disabled="!column.search"
@@ -81,7 +99,7 @@
               <!-- action col -->
               <td v-if="showAction" class="table--td">
                 <div class="flex justify-center gap-3">
-                  <slot name="action" :item="item">
+                  <slot name="action" :row-data="rowData" :row-index="index">
                     <!--  -->
                   </slot>
                 </div>
@@ -100,37 +118,48 @@
         </tbody>
       </table>
     </div>
-    <slot name="footer" :start-index="startIndex" :stop-index="stopIndex" :page-count="pageCount" :set-page="setPage">
-      <div
-        v-if="!hideFooter"
-        :class="['bg-white flex gap-2 justify-between items-center', footerClass]"
-        :style="footerStyles"
-      >
-        <div>目前顯示{{ startIndex + 1 }}-{{ stopIndex }}條，共{{ pageCount }}頁</div>
-        <div class="flex gap-1 items-center">
-          <template v-for="i in pageCount" :key="i">
-            <div :class="['change-page-btn', { 'is-active': i === page }]" @click="setPage(i)">
-              {{ i }}
-            </div>
-          </template>
+    <div v-if="!hideFooter" :class="['bg-white ', footerClass]" :style="footerStyles">
+      <slot name="footer" :start-index="startIndex" :stop-index="stopIndex" :page-count="pageCount" :set-page="setPage">
+        <div class="flex gap-2 justify-between items-center">
+          <div>目前顯示{{ startIndex + 1 }}-{{ stopIndex }}條，共{{ pageCount }}頁</div>
+          <div class="flex gap-1 items-center">
+            <template v-for="(i, idx) in paginationShowItems" :key="idx">
+              <div
+                v-if="i.display === 'number'"
+                :class="['change-page-btn', { 'is-active': i.value === page }]"
+                @click="setPage(i.value)"
+              >
+                {{ i.value }}
+              </div>
+              <div v-else class="change-page-btn is-disabled">
+                {{ i.value }}
+              </div>
+            </template>
+          </div>
         </div>
-      </div>
-    </slot>
+      </slot>
+    </div>
   </div>
 </template>
 
-<script setup lang="ts">
-import { createPagination, usePaginatedItems, usePagination } from "@/composable/usePagination";
+<script setup lang="ts" generic="T = any">
+import {
+  createPagination,
+  usePaginatedItems,
+  usePagination,
+  usePaginationShowStrategy,
+} from "@/composable/usePagination";
 import { useSearchFilter, UseSearchFilterConfig } from "@/composable/useSearchFilter";
 import { useVModel } from "@/composable/useVModel";
 import { computed, ref, toRefs } from "vue";
 import { provideCheckboxGroup } from "../c-checkbox-group/useCheckboxGroup";
-import type { ColumnItem, ColumnOptions, TableColumnAlignment } from "./types";
+import type { ColumnOption, ColumnOptions, TableColumnAlignment } from "./types";
 
 interface Props {
   // data
-  dataSource: any[];
-  columns: ColumnItem[];
+  dataSource: T[];
+  dataKey?: string | ((item: T) => any);
+  columns: ColumnOptions<T>;
   columnAlignment?: TableColumnAlignment;
   contentDefaultText?: string;
 
@@ -165,6 +194,7 @@ interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {
   // data
+  dataKey: "id",
   columnAlignment: "start",
   contentDefaultText: "-",
 
@@ -203,7 +233,7 @@ const slots = useSlots();
 const { columns, dataSource: _dataSource } = toRefs(props);
 
 const showAction = computed(() => !!slots["action"]);
-function handleColumn(column: ColumnOptions) {
+function handleColumn(column: ColumnOption) {
   const _alignment = column.alignment ?? props.columnAlignment;
   return {
     alignment: _alignment,
@@ -223,13 +253,13 @@ const tableColumns = computed(() => {
     return typeof column === "string" || typeof column === "number" || typeof column === "symbol"
       ? ({
           key: column,
-        } as ColumnOptions)
+        } as ColumnOption)
       : handleColumn(column);
   });
 });
 
 //搜尋
-const searchKeys = computed(() => tableColumns.value.filter((i) => i.search).map((i) => i.key as string));
+const searchKeys = computed(() => tableColumns.value.filter((i) => i.search).map((i) => i.key as keyof T));
 const _searchText = ref("");
 const searchText = computed({
   get() {
@@ -244,6 +274,13 @@ const searchTextSlotProps = computed(() => ({
   updateSearchText: (text: string) => (searchText.value = text),
   searchPlaceholder: props.searchPlaceholder,
 }));
+
+const getDataKey = computed(() =>
+  typeof props.dataKey === "function" ? props.dataKey : (item: T) => item[props.dataKey as keyof T],
+);
+const getValue = (item: T, key: string) => {
+  return item[key as keyof T] as any;
+};
 
 const dataSourceSearched = computed(() => {
   const value = _dataSource.value || [];
@@ -266,6 +303,11 @@ const { paginatedItems: paginatedData } = usePaginatedItems({
   itemsPerPage,
   startIndex,
   stopIndex,
+});
+
+const { paginationShowItems } = usePaginationShowStrategy({
+  page,
+  pageCount,
 });
 
 // select
@@ -329,6 +371,7 @@ if (props.selectable) {
           //用border會有一粗一細的問題
           // border-bottom: 1px solid #e0e0e0;
           box-shadow: inset 0px -1px 0px #e0e0e0;
+
           > div {
             padding: 0 0.75rem;
           }
@@ -364,14 +407,20 @@ if (props.selectable) {
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: all 0.3s ease;
+    // transition: all 0.3s ease;
     color: #828282;
+    user-select: none;
     &:hover,
     &.is-active {
       background-color: rgba(59, 130, 246, 1);
       font-weight: bold;
       color: white;
       cursor: pointer;
+    }
+
+    &.is-disabled {
+      pointer-events: none;
+      opacity: 0.5;
     }
   }
 
