@@ -1,10 +1,10 @@
 <template>
   <label
     :for="id"
-    :class="['checkbox', { 'is-active': isActive, 'is-disabled': isDisabled, 'is-readonly': isReadonly }]"
+    :class="['c-checkbox', { 'is-active': isActive, 'is-disabled': isDisabled, 'is-readonly': isReadonly }]"
   >
-    <div class="checkbox--body">
-      <div :class="['checkbox--input']">
+    <div class="c-checkbox--body">
+      <div :class="['c-checkbox--input']">
         <input :id="id" v-model="modelValue" :disabled="isReadonly || isDisabled" type="checkbox" :value="value" />
         <slot name="inner">
           <span class="inner">
@@ -134,55 +134,77 @@ injection.registerChild({
   value,
 });
 </script>
-<style scoped lang="scss">
-.checkbox {
+<style lang="scss">
+.c-checkbox {
   $label-color: #000;
-  $inner-color: rgb(255, 255, 255);
-  $border-color: #3c4b68;
-  $background-color: transparent;
+  $checkbox-inner-text-color: rgb(255, 255, 255);
+  $checkbox-border-color: #3c4b68;
+  $checkbox-background-color: transparent;
 
   --label-color: #{$label-color};
-  --inner-color: #{$inner-color};
-  --border-color: #{$border-color};
-  --background-color: #{$background-color};
+  --checkbox-inner-text-color: #{$checkbox-inner-text-color};
+  --checkbox-border-color: #{$checkbox-border-color};
+  --checkbox-background-color: #{$checkbox-background-color};
 
   // active
   --active-label-color: #{$label-color};
-  --active-inner-color: #{$inner-color};
-  --active-border-color: #{$border-color};
-  --active-background-color: var(--border-color); // 保持與現在的border顏色一致
+  --active-checkbox-inner-text-color: #{$checkbox-inner-text-color};
+  --active-checkbox-border-color: #{$checkbox-border-color};
+  --active-checkbox-background-color: var(--checkbox-border-color); // 保持與現在的border顏色一致
 
   // hover
   --hovered-label-color: var(--active-label-color);
-  --hovered-inner-color: var(--active-inner-color);
-  --hovered-border-color: var(--active-border-color);
-  --hovered-background-color: #{$background-color};
+  --hovered-checkbox-inner-text-color: var(--active-checkbox-inner-text-color);
+  --hovered-checkbox-border-color: var(--active-checkbox-border-color);
+  --hovered-checkbox-background-color: #{$checkbox-background-color};
 
   // disabled
   --disabled-label-color: rgb(209, 213, 219);
-  --disabled-border-color: rgb(209, 213, 219);
-  --disabled-inner-color: rgb(247, 224, 224);
-  --disabled-background-color: #{$background-color};
-  --disabled-active-inner-color: #{$inner-color};
-  --disabled-active-background-color: var(--border-color); // 保持與現在的border顏色一致
+  --disabled-checkbox-border-color: rgb(209, 213, 219);
+  --disabled-checkbox-inner-text-color: rgb(247, 224, 224);
+  --disabled-checkbox-background-color: #{$checkbox-background-color};
+  --disabled-active-checkbox-inner-text-color: #{$checkbox-inner-text-color};
+  --disabled-active-checkbox-background-color: var(--checkbox-border-color); // 保持與現在的border顏色一致
 
   // readonly
   --readonly-label-color: #{$label-color};
-  --readonly-border-color: #{$border-color};
-  --readonly-inner-color: #{$inner-color};
-  --readonly-background-color: #{$background-color};
-  --readonly-active-inner-color: var(--active-inner-color);
-  --readonly-active-background-color: var(--border-color); // 保持與現在的border顏色一致
+  --readonly-checkbox-border-color: #{$checkbox-border-color};
+  --readonly-checkbox-inner-text-color: #{$checkbox-inner-text-color};
+  --readonly-checkbox-background-color: #{$checkbox-background-color};
+  --readonly-active-checkbox-inner-text-color: var(--active-checkbox-inner-text-color);
+  --readonly-active-checkbox-background-color: var(--checkbox-border-color); // 保持與現在的border顏色一致
 }
-.checkbox {
+
+@mixin set-color($label, $checkbox-inner-text, $checkbox-border, $checkbox-background) {
+  .c-checkbox {
+    color: $label;
+    &--input {
+      input {
+        border-color: $checkbox-border;
+        background-color: $checkbox-background;
+      }
+      .inner {
+        color: $checkbox-inner-text;
+      }
+    }
+  }
+}
+
+.c-checkbox {
   --checkbox-size: 20px;
   --gap: 6px;
 
+  display: flex;
   cursor: pointer;
   font-size: 14px;
   line-height: 20px;
-  color: var(--label-color);
-  display: flex;
+  // color: var(--label-color);
+  @include set-color(
+    var(--label-color),
+    var(--checkbox-inner-text-color),
+    var(--checkbox-border-color),
+    var(--checkbox-background-color)
+  );
 
   &--body {
     display: flex;
@@ -209,8 +231,10 @@ injection.registerChild({
       cursor: pointer;
       position: relative;
       outline: none;
-      border: 2px solid var(--border-color);
-      background-color: var(--background-color);
+      border-width: 2px;
+      border-style: solid;
+      // border: 2px solid var(--checkbox-border-color);
+      // background-color: var(--checkbox-background-color);
       appearance: none;
       -webkit-appearance: none;
       -webkit-tap-highlight-color: transparent;
@@ -228,48 +252,89 @@ injection.registerChild({
       right: 0;
       bottom: 0;
       padding: 2px;
-      color: var(--inner-color);
+      // color: var(--checkbox-inner-text-color);
     }
   }
 
   &:hover {
-    --label-color: var(--hovered-label-color);
-    --inner-color: var(--hovered-inner-color);
-    --border-color: var(--hovered-border-color);
-    --background-color: var(--hovered-background-color);
+    @include set-color(
+      var(--hovered-label-color),
+      var(--hovered-checkbox-inner-text-color),
+      var(--hovered-checkbox-border-color),
+      var(--hovered-checkbox-background-color)
+    );
+    // --label-color: var(--hovered-label-color);
+    // --checkbox-inner-text-color: var(--hovered-checkbox-inner-text-color);
+    // --checkbox-border-color: var(--hovered-checkbox-border-color);
+    // --checkbox-background-color: var(--hovered-checkbox-background-color);
   }
 
   &.is-active {
     .inner {
       display: flex;
     }
-    --label-color: var(--active-label-color);
-    --inner-color: var(--active-inner-color);
-    --border-color: var(--active-border-color);
-    --background-color: var(--active-background-color);
+
+    @include set-color(
+      var(--active-label-color),
+      var(--active-checkbox-inner-text-color),
+      var(--active-checkbox-border-color),
+      var(--active-checkbox-background-color)
+    );
+    // --label-color: var(--active-label-color);
+    // --checkbox-inner-text-color: var(--active-checkbox-inner-text-color);
+    // --checkbox-border-color: var(--active-checkbox-border-color);
+    // --checkbox-background-color: var(--active-checkbox-background-color);
   }
 
   &.is-readonly {
-    --label-color: var(--readonly-label-color);
-    --inner-color: var(--readonly-inner-color);
-    --border-color: var(--readonly-border-color);
-    --background-color: var(--readonly-background-color);
+    @include set-color(
+      var(--readonly-label-color),
+      var(--readonly-checkbox-inner-text-color),
+      var(--readonly-checkbox-border-color),
+      var(--readonly-checkbox-background-color)
+    );
     &.is-active {
-      --inner-color: var(--readonly-active-inner-color);
-      --background-color: var(--readonly-active-background-color);
+      @include set-color(
+        var(--readonly-label-color),
+        var(--readonly-active-checkbox-inner-text-color),
+        var(--readonly-checkbox-border-color),
+        var(--readonly-active-checkbox-background-color)
+      );
     }
+    // --label-color: var(--readonly-label-color);
+    // --checkbox-inner-text-color: var(--readonly-checkbox-inner-text-color);
+    // --checkbox-border-color: var(--readonly-border-color);
+    // --checkbox-background-color: var(--readonly-checkbox-background-color);
+    // &.is-active {
+    //   --checkbox-inner-text-color: var(--readonly-active-checkbox-inner-text-color);
+    //   --checkbox-background-color: var(--readonly-active-checkbox-background-color);
+    // }
   }
 
   &.is-disabled {
     pointer-events: none;
-    --label-color: var(--disabled-label-color);
-    --inner-color: var(--disabled-inner-color);
-    --border-color: var(--disabled-border-color);
-    --background-color: var(--disabled-background-color);
+    @include set-color(
+      var(--disabled-label-color),
+      var(--disabled-checkbox-inner-text-color),
+      var(--disabled-checkbox-border-color),
+      var(--disabled-checkbox-background-color)
+    );
     &.is-active {
-      --inner-color: var(--disabled-active-inner-color);
-      --background-color: var(--disabled-active-background-color);
+      @include set-color(
+        var(--disabled-label-color),
+        var(--disabled-active-checkbox-inner-text-color),
+        var(--disabled-checkbox-border-color),
+        var(--disabled-active-checkbox-background-color)
+      );
     }
+    // --label-color: var(--disabled-label-color);
+    // --checkbox-inner-text-color: var(--disabled-checkbox-inner-text-color);
+    // --checkbox-border-color: var(--disabled-border-color);
+    // --checkbox-background-color: var(--disabled-checkbox-background-color);
+    // &.is-active {
+    //   --checkbox-inner-text-color: var(--disabled-active-checkbox-inner-text-color);
+    //   --checkbox-background-color: var(--disabled-active-checkbox-background-color);
+    // }
   }
 }
 </style>

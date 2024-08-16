@@ -1,5 +1,5 @@
 <template>
-  <div :class="['checkbox-group', { vertical: direction === 'vertical' }]">
+  <div :class="['c-checkbox-group']">
     <slot></slot>
   </div>
 </template>
@@ -11,12 +11,9 @@ interface CheckboxGroupProps {
   modelValue?: any;
   readonly?: boolean;
   disabled?: boolean;
-  direction?: "vertical" | "horizontal";
 }
 
-const props = withDefaults(defineProps<CheckboxGroupProps>(), {
-  direction: "horizontal",
-});
+const props = withDefaults(defineProps<CheckboxGroupProps>(), {});
 const emit = defineEmits(["update:modelValue"]);
 
 const modelV = useVModel({
@@ -34,9 +31,6 @@ provideCheckboxGroup({
 </script>
 
 <style lang="scss">
-.checkbox-group {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.c-checkbox-group {
 }
 </style>

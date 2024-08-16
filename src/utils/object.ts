@@ -109,7 +109,7 @@ export function setObject(paths: string | string[], obj: any, value: any = null)
   if (typeof paths === "string") paths = toStringPath(paths);
   const parentPath = paths.slice(0, paths.length - 1);
   const targetKey = paths[paths.length - 1];
-  obj = Object.createFromPath(parentPath, obj);
+  obj = createObjectFromPath(parentPath, obj);
   obj[targetKey] = value;
   return obj;
 }
@@ -182,7 +182,7 @@ export function mergeObject(obj: any, sources: any, options: MergeOptions = {}):
 
 export function flatTree<T, K = T>(
   tree: T[],
-  transform = (item: T, _rawParent?: T, _transformedParent?: K): K => item as unknown as K,
+  transform: (item: T, rawParent?: T, transformedParent?: K) => K = (item: T) => item as unknown as K,
   getChildren = (item: T) => (item as any).children as T[] | undefined,
 ): K[] {
   const _flat = (tree: T[], parent?: T, transformedParent?: K): K[] => {

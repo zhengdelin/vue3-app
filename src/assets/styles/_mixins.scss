@@ -1,17 +1,73 @@
-@mixin max-md {
-  @media (max-width: 768px) {
+$sm: 640px;
+$md: 768px;
+$lg: 1024px;
+$xl: 1280px;
+$xxl: 1536px;
+
+@mixin max-sm {
+  @media (max-width: #{$sm}) {
     @content;
   }
 }
 
-@mixin max-sm {
-  @media (max-width: 375px) {
+@mixin max-md {
+  @media (max-width: #{$md}) {
+    @content;
+  }
+}
+
+@mixin max-lg {
+  @media (max-width: #{$lg}) {
+    @content;
+  }
+}
+
+@mixin max-xl {
+  @media (max-width: #{$xl}) {
+    @content;
+  }
+}
+
+@mixin max-xxl {
+  @media (max-width: #{$xxl}) {
+    @content;
+  }
+}
+
+@mixin sm {
+  @media (min-width: #{$sm}) {
     @content;
   }
 }
 
 @mixin md {
-  @media (min-width: 768px) {
+  @media (min-width: #{$md}) {
     @content;
   }
+}
+
+@mixin lg {
+  @media (min-width: #{$lg}) {
+    @content;
+  }
+}
+
+@mixin xl {
+  @media (min-width: #{$xl}) {
+    @content;
+  }
+}
+
+@mixin xxl {
+  @media (min-width: #{$xxl}) {
+    @content;
+  }
+}
+
+@mixin truncate-multiline($line) {
+  display: -webkit-box;
+  -webkit-line-clamp: $line;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
