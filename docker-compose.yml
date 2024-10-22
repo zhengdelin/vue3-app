@@ -1,17 +1,6 @@
-version: "3"
+version: "3.8"
 services:
-  vue3-app:
-    container_name: vue3-app
+  web:
     build: .
-    image: vue
     ports:
-      - 80:80
-  nginx:
-    container_name: nginx-app
-    image: nginx:stable-alpine
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-    ports:
-      - 80:80
-    depends_on:
-      - vue3-app
+      - "80:80"
