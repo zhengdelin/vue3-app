@@ -24,9 +24,8 @@ COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 # 從建構階段複製建構後的檔案到 Nginx 伺服器
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 
-# 暴露 80 端口
-EXPOSE 80
+# 暴露 80 和 443 端口
+EXPOSE 80 443
 
 # 啟動 Nginx 伺服器
 CMD ["nginx", "-g", "daemon off;"]
-

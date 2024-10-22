@@ -4,3 +4,8 @@ services:
     build: .
     ports:
       - "80:80"
+      - "443:443"
+    volumes:
+      # domain: enjoy-buy.langyage.in
+      - /etc/letsencrypt/live/enjoy-buy.langyage.in/fullchain.pem:/etc/ssl/certs/fullchain.pem
+      - /etc/letsencrypt/live/enjoy-buy.langyage.in/privkey.pem:/etc/ssl/private/privkey.pem
