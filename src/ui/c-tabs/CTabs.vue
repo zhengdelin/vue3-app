@@ -43,12 +43,12 @@
     </div>
   </div>
 </template>
-<script setup lang="ts">
+<script setup lang="ts" generic="T = any">
 import useRouteCompare from "@/composable/useRouteCompare";
 import { useVModel } from "@/composable/useVModel";
 import type { RouteLocationNormalizedLoaded, RouteLocationRaw } from "vue-router";
 import type { Tab as DefaultTabT } from "../c-tabs-item/c-tabs-item.types";
-type Tab = DefaultTabT & { [key: string]: any };
+type Tab = DefaultTabT<T> & { [key: string]: any };
 const props = withDefaults(
   defineProps<{
     modelValue?: any;
@@ -202,8 +202,16 @@ provide("modelValue", modelV);
 
     const tabRoute = typeof item.route === "function" ? item.route(curRoute) : item.route;
 
-    if (compare(tabRoute)) {
+    const a = useLink({
+      to: tabRoute,
+    });
+    console.log("a :>> ", a);
+    // console.log("tabRoute :>> ", tabRoute);
+    // console.log("isExactActive :>> ", isExactActive.value);
+    const isActive = compare(tabRoute, curRoute);
+    if (isActive) {
       modelV.value = item[itemValueKey.value];
+      return;
     }
   }
 })();
@@ -263,7 +271,7 @@ if (!isAllFirstRendered.value) {
       z-index: 2;
 
       &.sticky-to-header {
-        top: var(--header-height);
+        top: var(--header-height, 0);
       }
     }
 

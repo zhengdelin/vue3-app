@@ -1,5 +1,5 @@
 import { useAutoIncrementId } from "../useAutoIncrementId";
-import { UseModalBasicProps, UseModal, IModal } from "./types";
+import { IModal, UseModal, UseModalBasicProps } from "./types";
 
 const { add: addModal, remove: removeModal, items: modalContainers } = useAutoIncrementId<IModal>();
 const INITIAL_MODAL_ID = -1;
@@ -136,6 +136,7 @@ export default class Modal<PropsT = UseModalBasicProps> {
   }
 
   _renderModal() {
+    console.log("this.props :>> ", this.props);
     this.isVisible.value = true;
     this._id = addModal({
       modal: this.vNode,

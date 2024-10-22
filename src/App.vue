@@ -9,17 +9,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen flex justify-center my-28">
-    <div class="flex flex-col items-center gap-4">
-      <div class="flex items-center gap-2 flex-wrap">
-        <RouterLink v-for="route in $router.getRoutes()" :key="route.name" class="btn" :to="{ name: route.name }">
-          <c-btn>{{ route.path }}</c-btn>
-        </RouterLink>
-      </div>
-      <RouterView></RouterView>
-    </div>
+  <div>
+    <router-view></router-view>
   </div>
-  <MessageContainer></MessageContainer>;
+  <MessageContainer></MessageContainer>
   <ModalContainer>
     <template #loading>
       <div v-loading></div>

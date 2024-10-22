@@ -6,13 +6,13 @@
     </slot>
   </div>
 </template>
-<script setup lang="ts">
+<script setup lang="ts" generic="T = any">
 import useRouteCompare from "@/composable/useRouteCompare";
 import type { WritableComputedRef } from "vue";
 import type { RouteLocationNormalizedLoaded, RouteLocationRaw } from "vue-router";
 import type { Tab, TabOnBeforeTabChangeNext } from "./c-tabs-item.types";
 
-const props = defineProps<Tab>();
+const props = defineProps<Tab<T>>();
 
 const tabRoute = computed(() => {
   if (!props.route) return;
@@ -39,7 +39,7 @@ const isActive = computed(() => modelV.value === props.value);
 const injections = inject("defaults", {
   onBeforeTabChange: (() => {
     //
-  }) as Tab["onBeforeTabChange"],
+  }) as Tab<T>["onBeforeTabChange"],
 });
 const onBeforeTabChange = computed(() => props.onBeforeTabChange ?? injections.onBeforeTabChange);
 
@@ -52,7 +52,7 @@ async function onClick() {
     }
   };
   if (typeof onBeforeTabChange.value === "function") {
-    const needToChangeTab = await onBeforeTabChange.value(props.value, next);
+    const needToChangeTab = await onBeforeTabChange.value(props.value as any, next);
     if (needToChangeTab !== true) {
       return;
     }
@@ -69,18 +69,7 @@ if (props.route) {
 }
 </script>
 <style lang="scss">
-@mixin transitionProperties() {
-  $transitionProperty: box-shadow, transform, opacity, background-color, border;
-  $transitionDuration: 0.28s;
-  $transitionTimingFunction: cubic-bezier(0.4, 0, 0.2, 1);
-  //繼承v-btn的動畫
-  transition-property: $transitionProperty;
-  transition-duration: $transitionDuration;
-  transition-timing-function: $transitionTimingFunction;
-}
-
 .c-tabs-item {
-  @include transitionProperties();
   @apply flex justify-center items-center pl-[1.125rem] pr-2 text-p3;
 
   position: relative;
@@ -88,10 +77,10 @@ if (props.route) {
   padding: 12px 32px;
   border-bottom: 3px solid transparent;
   color: #7f7f7f;
+  font-weight: bold;
 
   &.is-active,
   &:hover {
-    font-weight: bold;
     border-color: #3f51b5;
     cursor: pointer;
     color: black;

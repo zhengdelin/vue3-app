@@ -17,15 +17,7 @@
 <script setup lang="ts">
 import { useVModel } from "@/composable/useVModel";
 import { RADIO_GROUP_INJECTION_KEY } from "../c-radio-group/constants";
-
-interface RadioProps {
-  modelValue?: any;
-  value: any;
-  label?: string;
-  description?: string;
-  disabled?: boolean;
-  readonly?: boolean;
-}
+import { RadioProps } from "./c-radio.types";
 
 const props = withDefaults(defineProps<RadioProps>(), {
   label: "",
@@ -133,6 +125,7 @@ const active = computed(() => props.value === modelV.value);
   }
 
   &--input {
+    flex: none;
     position: relative;
     display: flex;
     align-items: center;
@@ -174,8 +167,9 @@ const active = computed(() => props.value === modelV.value);
   }
 
   &--label-container {
-    display: flex;
     flex-grow: 1;
+    display: flex;
+    flex-direction: column;
     justify-content: space-between;
 
     .label,

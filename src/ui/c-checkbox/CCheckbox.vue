@@ -27,16 +27,7 @@
 <script setup lang="ts">
 import { useVModel } from "@/composable/useVModel";
 import { CHECKBOX_GROUP_INJECTION_KEY } from "../c-checkbox-group/useCheckboxGroup";
-
-interface CheckboxProps {
-  modelValue?: any;
-  falseValue?: any;
-  value?: any;
-  label?: string;
-  selectAll?: boolean;
-  readonly?: boolean;
-  disabled?: boolean;
-}
+import { CheckboxProps } from "./c-checkbox.types";
 
 const props = withDefaults(defineProps<CheckboxProps>(), {
   falseValue: false,
@@ -215,6 +206,7 @@ injection.registerChild({
   }
 
   &--input {
+    flex: none;
     position: relative;
     display: flex;
     align-items: center;

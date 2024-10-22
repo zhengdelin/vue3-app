@@ -4,11 +4,13 @@ import { RouteLocationNormalizedLoaded, RouteLocationRaw } from "vue-router";
  * @param tab 切換成的tab值
  * @param route 切換的路由
  */
-export type TabOnBeforeTabChangeNext = (tab?: unknown, route?: RouteLocationRaw) => void;
+export type TabOnBeforeTabChangeNext<T = any> = (tab?: T, route?: RouteLocationRaw) => void;
 
-export interface Tab {
+export type TabOnBeforeTabChange<T = any> = (tab: T, next: TabOnBeforeTabChangeNext<T>) => MaybePromise<Maybe<boolean>>;
+
+export interface Tab<T = any> {
   title?: string;
-  value?: unknown;
+  value?: T;
   /**
    * 設置該tab的路由 將會覆蓋所有Tabs組件的設定
    */
@@ -19,5 +21,5 @@ export interface Tab {
    * @param next
    * @returns 回傳true表示切換
    */
-  onBeforeTabChange?(tab: Tab["value"], next: TabOnBeforeTabChangeNext): MaybePromise<Maybe<boolean>>;
+  onBeforeTabChange?: TabOnBeforeTabChange<T>;
 }

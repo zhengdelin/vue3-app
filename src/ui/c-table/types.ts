@@ -1,36 +1,68 @@
-import { VNodeChild } from "vue";
+import type { VNodeChild } from "vue";
 
+// base
+export type KeyType<T> = (keyof T & string) | (string & Record<never, never>);
 export type TableColumnAlignment = "start" | "end" | "center";
-export interface ColumnOption<T = any> {
-  key: string;
+export type TableColumnType = "default" | "index" | "expand";
+
+// column type
+interface TableColumnBase<T = any> {
+  key: KeyType<T>;
   label?: string;
-  /**
-   * 是否可搜索
-   * @default false
-   */
-  search?: boolean;
-
-  width?: string;
-  styles?: any;
-  /**
-   * 對齊方式
-   */
-  alignment?: TableColumnAlignment;
-  /**
-   * 標題對齊方式，其優先級高於對齊方式
-   */
-  headerAlignment?: TableColumnAlignment;
-  /**
-   * 內容對齊方式，其優先級高於對齊方式
-   */
-  contentAlignment?: TableColumnAlignment;
-
-  /**
-   * 是否可排序
-   * @default false
-   */
-  sort?: boolean;
-
-  render?: (data: { rowData: T; rowIndex: number; value: any }) => VNodeChild;
+  value?: (data: { rowData: T; rowIndex: number }) => any;
+  render?: (data: { rowData: T; rowIndex: number }) => VNodeChild;
 }
-export type ColumnOptions<T = any> = ColumnOption<T>[];
+interface TableColumnAlignments {
+  alignment?: TableColumnAlignment;
+  headerAlignment?: TableColumnAlignment;
+  contentAlignment?: TableColumnAlignment;
+}
+interface TableColumnStyles {
+  class?: string;
+  headerClass?: string;
+  styles?: Record<string, any>;
+  headerStyles?: Record<string, any>;
+  width?: string;
+}
+
+export interface TableColumnExpand<T = any> extends TableColumnBase<T> {
+  type: "expand";
+}
+
+export interface TableColumnIndex<T = any>
+  extends Omit<TableColumnBase<T>, "key">,
+    TableColumnAlignments,
+    TableColumnStyles {
+  type: "index";
+  key?: KeyType<T>;
+}
+export interface TableColumnActions<T = any>
+  extends Omit<TableColumnBase<T>, "key">,
+    TableColumnAlignments,
+    TableColumnStyles {
+  type: "actions";
+  key?: KeyType<T>;
+}
+
+export interface TableColumnDefault<T = any> extends TableColumnBase<T>, TableColumnAlignments, TableColumnStyles {
+  type?: "default" | "index";
+}
+
+export type TableColumn<T = any> =
+  | TableColumnExpand<T>
+  | TableColumnDefault<T>
+  | TableColumnIndex<T>
+  | TableColumnActions<T>;
+export type TableColumns<T = any> = TableColumn<T>[];
+
+export interface TableProps<T = any> {
+  data: T[];
+  dataKey?: keyof T | ((item: T) => any);
+  columns: TableColumns<T>;
+  alignment?: TableColumnAlignment;
+
+  /**
+   * table layout: fixed
+   */
+  fixed?: boolean;
+}

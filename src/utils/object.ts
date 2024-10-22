@@ -180,16 +180,44 @@ export function mergeObject(obj: any, sources: any, options: MergeOptions = {}):
   return obj;
 }
 
-export function flatTree<T, K = T>(
-  tree: T[],
-  transform: (item: T, rawParent?: T, transformedParent?: K) => K = (item: T) => item as unknown as K,
-  getChildren = (item: T) => (item as any).children as T[] | undefined,
-): K[] {
-  const _flat = (tree: T[], parent?: T, transformedParent?: K): K[] => {
-    return tree.reduce((acc, node) => {
-      const transformedNode = transform(node, parent, transformedParent);
-      return acc.concat(transformedNode, _flat(getChildren(node) || [], node, transformedNode));
-    }, [] as K[]);
-  };
-  return _flat(tree);
+export function omit<T extends object, K extends keyof T>(obj: T, ...keys: K[]): Omit<T, K> {
+  const clone = { ...obj };
+  keys.forEach((key) => {
+    delete clone[key];
+  });
+  return clone;
+}
+
+export function pick<T extends object, K extends keyof T>(obj: T, ...keys: K[]): Pick<T, K> {
+  const result = {} as Pick<T, K>;
+  keys.forEach((key) => {
+    result[key] = obj[key];
+  });
+  return result;
+}
+
+export function pickBy<T extends object, K extends keyof T>(
+  obj: T,
+  predicate: (value: T[K], key: K) => boolean,
+): Pick<T, K> {
+  const clone = { ...obj };
+  Object.keys(clone).forEach((key) => {
+    if (!predicate(clone[key as K], key as K)) {
+      delete clone[key as K];
+    }
+  });
+  return clone;
+}
+
+export function omitBy<T extends object, K extends keyof T>(
+  obj: T,
+  predicate: (value: T[K], key: K) => boolean,
+): Omit<T, K> {
+  const clone = { ...obj };
+  Object.keys(clone).forEach((key) => {
+    if (predicate(clone[key as K], key as K)) {
+      delete clone[key as K];
+    }
+  });
+  return clone;
 }

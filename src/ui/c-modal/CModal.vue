@@ -87,12 +87,12 @@ interface Modal {
    * @default closeWhenFormModelChanged // 當formModel有值時的預設
    * @default close
    *
-   * @when false // 甚麼都不做
+   * @when none // 甚麼都不做
    * @when close // 關閉彈窗
    * @when closeWhenFormModelChanged // 視formModel有無修改過而決定
    * @when Function // 回傳true關閉
    */
-  onOverlayClick?: false | "close" | "closeWhenFormModelChanged" | (() => MaybePromise<boolean>);
+  onOverlayClick?: "none" | "close" | "closeWhenFormModelChanged" | (() => MaybePromise<boolean>);
 
   hideHeader?: boolean;
   hideFooter?: boolean;
@@ -146,6 +146,8 @@ const props = withDefaults(defineProps<Modal>(), {
   fullScreen: false,
   renderModalComponent: undefined,
 });
+
+console.log("props :>> ", props);
 
 const emit = defineEmits(["update:modelValue", "confirm", "cancel", "close"]);
 
@@ -220,7 +222,7 @@ const { $tt } = useI18n();
 const confirmModal = $confirm(
   {
     title: $tt.s("youHaveUnsavedChanges"),
-    text: `如果您關閉此頁面，您未保存的資料將會遺失。\n您確定要離開此頁面嗎？`,
+    text: `如果您關閉此頁面，您未保存的資料將會遺失。您確定要離開此頁面嗎？`,
     onConfirm: (close) => {
       close();
       closeModal();
@@ -228,7 +230,7 @@ const confirmModal = $confirm(
     confirmText: $tt("leave"),
     cancelText: $tt("stay"),
   },
-  false,
+  undefined,
   false,
 );
 onUnmounted(() => {
@@ -252,7 +254,7 @@ const onOverlayClickAction = computed(() => {
 
 async function handleOnOverlayClick() {
   const action = onOverlayClickAction.value;
-  if (action === false) return;
+  if (action === "none") return;
 
   if (action === "close") {
     return closeModal();
@@ -392,7 +394,7 @@ export default {
   }
 
   .modal__content {
-    // @apply overflow-auto;
+    @apply flex-1;
   }
 
   .modal__footer {

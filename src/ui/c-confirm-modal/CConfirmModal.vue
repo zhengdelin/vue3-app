@@ -12,8 +12,8 @@
       </slot>
     </div>
     <template #footer="{ confirm, cancel, confirmBtnProps, cancelBtnProps }">
-      <n-button v-bind="cancelBtnProps" @click="cancel">取消</n-button>
-      <n-button type="primary" attr-type="submit" v-bind="confirmBtnProps" @click="confirm">確定</n-button>
+      <c-btn v-bind="cancelBtnProps" @click="cancel">取消</c-btn>
+      <c-btn type="submit" v-bind="confirmBtnProps" @click="confirm">確定</c-btn>
     </template>
   </c-modal>
 </template>

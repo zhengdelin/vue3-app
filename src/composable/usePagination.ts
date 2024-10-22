@@ -8,13 +8,14 @@ interface PaginateProps {
   itemsPerPage?: number;
 }
 
-export function createPagination(props: PaginateProps) {
+export function createPagination(props: PaginateProps, emit?: any) {
   const page = useVModel({
     props,
     propName: "page",
     transformIn(value) {
       return value ?? 1;
     },
+    emit,
   });
   const itemsPerPage = useVModel({
     props,
@@ -22,12 +23,53 @@ export function createPagination(props: PaginateProps) {
     transformIn(value) {
       return value ?? 10;
     },
+    emit,
   });
   const itemsLength = computed(() => props.itemsLength || 0);
   return {
     page,
     itemsPerPage,
     itemsLength,
+  };
+}
+
+export function createPaginationMethods(options: {
+  page: Ref<number>;
+  itemsPerPage: Ref<number>;
+  pageCount: Ref<number>;
+}) {
+  const { page, itemsPerPage, pageCount } = options;
+  const setItemsPerPage = (value: number) => {
+    itemsPerPage.value = value;
+    page.value = 1;
+  };
+
+  const setPage = (value: number) => {
+    page.value = clamp(value, 1, pageCount.value);
+  };
+
+  const toNextPage = () => {
+    setPage(page.value + 1);
+  };
+
+  const toPrevPage = () => {
+    setPage(page.value - 1);
+  };
+
+  const toFirstPage = () => {
+    setPage(1);
+  };
+
+  const toLastPage = () => {
+    setPage(pageCount.value);
+  };
+  return {
+    setItemsPerPage,
+    setPage,
+    toNextPage,
+    toPrevPage,
+    toFirstPage,
+    toLastPage,
   };
 }
 
@@ -56,31 +98,11 @@ export function usePagination(options: { page: Ref<number>; itemsPerPage: Ref<nu
     return Math.min(startIndex.value + itemsPerPage.value, itemsLength.value);
   });
 
-  function setItemsPerPage(value: number) {
-    itemsPerPage.value = value;
-    page.value = 1;
-  }
-
-  function setPage(value: number) {
-    page.value = clamp(value, 1, pageCount.value);
-  }
-
-  function nextPage() {
-    setPage(page.value + 1);
-  }
-
-  function prevPage() {
-    setPage(page.value - 1);
-  }
-
   return {
     pageCount,
     startIndex,
     stopIndex,
-    setItemsPerPage,
-    setPage,
-    nextPage,
-    prevPage,
+    ...createPaginationMethods({ page, itemsPerPage, pageCount }),
   };
 }
 
@@ -148,7 +170,7 @@ export function usePaginationShowStrategy(options: {
       showCount.before += offset;
     }
 
-    console.log("showCount :>> ", showCount);
+    // console.log("showCount :>> ", showCount);
     return showCount;
   });
 
@@ -215,8 +237,8 @@ export function usePaginationShowStrategy(options: {
     return shows;
   });
   const paginationShowItems = computed(() => {
-    console.log("showItemsBeforeCurPage.value :>> ", showItemsBeforeCurPage.value);
-    console.log("showItemsAfterCurPage.value :>> ", showItemsAfterCurPage.value);
+    // console.log("showItemsBeforeCurPage.value :>> ", showItemsBeforeCurPage.value);
+    // console.log("showItemsAfterCurPage.value :>> ", showItemsAfterCurPage.value);
     return [
       ...showItemsBeforeCurPage.value,
       { value: page.value, display: "number" } as PaginationShowStrategyItem,

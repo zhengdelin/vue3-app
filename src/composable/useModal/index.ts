@@ -1,5 +1,5 @@
 import Modal from "./modal";
-import { UseModalBasicProps, UseModal } from "./types";
+import { UseModal, UseModalBasicProps } from "./types";
 
 /**
  * @see 如果想在SFC檔中使用useModal，props中必須包含modelValue用來控制modal的顯示

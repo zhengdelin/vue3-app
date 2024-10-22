@@ -1,5 +1,8 @@
 <template>
-  <div :class="['top-0 left-0 w-full h-full z-[9999] flex justify-center items-center', position]" :style="{ background }">
+  <div
+    :class="['top-0 left-0 w-full h-full z-[9999] flex justify-center items-center', position]"
+    :style="{ background }"
+  >
     <div class="lds-ellipsis">
       <div></div>
       <div></div>

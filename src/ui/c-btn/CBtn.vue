@@ -1,53 +1,75 @@
 <template>
-  <button
-    :class="['btn loading-center', { 'btn-disabled': disabled, 'btn-loading': loading }]"
+  <component
+    :is="renderer()"
+    :class="['c-btn', { 'is-disabled': disabled, 'is-loading': loading, 'c-btn--block': block }]"
     :disabled="disabled || loading"
   >
-    <div v-if="loading" class="btn-loading-overlay"></div>
-    <span v-if="icon" class="icon">{{ icon }}</span>
-    <div><slot></slot></div>
-  </button>
+    <div v-if="loading" class="c-btn-loading-overlay"></div>
+    <span v-if="$slots.icon" class="c-btn-icon">
+      <slot name="icon"></slot>
+    </span>
+    <slot></slot>
+  </component>
 </template>
 
 <script setup lang="ts">
-withDefaults(
-  defineProps<{
-    disabled?: boolean;
-    loading?: boolean;
-    icon?: string;
-  }>(),
-  {},
-);
+import { RouterLink } from "vue-router";
+import { CBtnProps } from "./c-btn.types";
+
+const props = withDefaults(defineProps<CBtnProps>(), {
+  icon: undefined,
+  to: undefined,
+});
+const renderer = () => {
+  return props.to ? h(RouterLink, { to: props.to }) : h("button");
+};
 </script>
 
-<style scoped lang="scss">
-.btn {
-  @apply text-p1;
-  background-color: #4caf50; /* Green */
-  border: none;
-  color: white;
-  padding: 8px 24px;
-  text-align: center;
+<style lang="scss">
+.c-btn {
+  // --background-color: #69b52d;
+  // --text-color: white;
+
+  // --hovered-background-color: #45a049;
+  // --hovered-text-color: white;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  line-height: 1.25;
+  border-radius: 4px;
+  padding: 6px 12px;
   text-decoration: none;
+  transition-property: background, color;
   transition-duration: 0.4s;
-  cursor: pointer;
-  border-radius: 6px;
+  transition-timing-function: ease;
   overflow: hidden;
+  background-color: #4caf50; /* Green */
+  color: white;
+
+  &.c-btn--block {
+    width: 100%;
+  }
+
+  @include md() {
+    font-size: 16px;
+  }
 
   &:hover {
     background-color: #45a049; /* Darker Green */
   }
 
-  &.btn-disabled {
+  &.is-disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
 
-  &.btn-loading {
+  &.is-loading {
     position: relative;
     pointer-events: none;
 
-    .btn-loading-overlay {
+    .c-btn-loading-overlay {
       position: absolute;
       left: 0;
       top: 0;
@@ -73,8 +95,11 @@ withDefaults(
     }
   }
 
-  .icon {
-    margin-right: 5px;
+  .c-btn-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 4px;
   }
 }
 @keyframes button-loading-spinner {

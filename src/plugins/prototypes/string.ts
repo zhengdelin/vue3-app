@@ -1,4 +1,4 @@
-import { toKebabCase, toStringPath, toCapitalize, toLowerThenCapitalize } from "@/utils/string";
+import { toCamelCase, toCapitalize, toKebabCase, toLowerThenCapitalize, toStringPath } from "@/utils/string";
 export {};
 declare global {
   interface String {
@@ -6,6 +6,7 @@ declare global {
     toLowerThenCapitalize(): ReturnType<typeof toLowerThenCapitalize>;
     toStringPath(): ReturnType<typeof toStringPath>;
     toKebabCase(): ReturnType<typeof toKebabCase>;
+    toCamelCase(firstLetterUppercase?: boolean): ReturnType<typeof toCamelCase>;
   }
 }
 
@@ -23,4 +24,8 @@ String.prototype.toStringPath = function () {
 
 String.prototype.toKebabCase = function () {
   return toKebabCase(this.toString());
+};
+
+String.prototype.toCamelCase = function (firstLetterUppercase) {
+  return toCamelCase(this.toString(), firstLetterUppercase);
 };

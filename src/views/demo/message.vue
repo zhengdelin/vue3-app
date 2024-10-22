@@ -1,8 +1,10 @@
 <template>
-  <c-btn @click="showSuccessMessage">點我彈出成功訊息</c-btn>
-  <c-btn @click="showErrorMessage">點我彈出失敗訊息</c-btn>
-  <c-btn @click="showWarningMessage">點我彈出警告訊息</c-btn>
-  <c-btn @click="showInfoMessage">點我彈出訊息訊息</c-btn>
+  <div class="flex gap-2">
+    <c-btn @click="showSuccessMessage">點我彈出成功訊息</c-btn>
+    <c-btn @click="showErrorMessage">點我彈出失敗訊息</c-btn>
+    <c-btn @click="showWarningMessage">點我彈出警告訊息</c-btn>
+    <c-btn @click="showInfoMessage">點我彈出訊息訊息</c-btn>
+  </div>
 </template>
 <script setup lang="ts">
 import { $message } from "@/composable/useMessage";

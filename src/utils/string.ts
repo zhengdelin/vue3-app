@@ -1,5 +1,5 @@
 export function toKebabCase(str = "") {
-  if (toKebabCase.cache.has(str)) return toKebabCase.cache.get(str);
+  if (toKebabCase.cache.has(str)) return toKebabCase.cache.get(str) as string;
   // console.log("str :>> ", str);
   // let kebab = str.replace(/[^a-z]/gi, "-");
   // console.log("kebab :>> ", kebab);
@@ -15,7 +15,12 @@ export function toKebabCase(str = "") {
   toKebabCase.cache.set(str, kebab);
   return kebab;
 }
-toKebabCase.cache = new Map();
+toKebabCase.cache = new Map<string, string>();
+
+export function toCamelCase(str = "", firstLetterUppercase = false) {
+  const camel = toKebabCase(str).replace(/-./g, (x) => x[1].toUpperCase());
+  return firstLetterUppercase ? camel.charAt(0).toUpperCase() + camel.slice(1) : camel;
+}
 
 /**
  * data.email -> ["data", "email"]

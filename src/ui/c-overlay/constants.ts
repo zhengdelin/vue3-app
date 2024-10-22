@@ -7,8 +7,3 @@ export const OVERLAY_PROPS_DEFAULT = makePropsDefault<OverlayProps>({
   transition: "fade",
   contentProps: undefined,
 });
-
-interface P {
-  a: number;
-  b: string;
-}
